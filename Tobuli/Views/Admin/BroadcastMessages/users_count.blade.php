@@ -1,0 +1,1 @@
+<span class="badge badge-info" style="color: #fff; background-color: #17a2b8;">{{ $receiversCount }}</span>

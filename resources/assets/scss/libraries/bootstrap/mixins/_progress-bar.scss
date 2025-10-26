@@ -1,0 +1,11 @@
+// Progress bars
+
+@mixin progress-bar-variant($color) {
+  background-color: $color;
+  text-shadow: -1px 0 $color, 0 1px $color, 1px 0 $color, 0 -1px $color;
+
+  // Deprecated parent class requirement as of v3.2.0
+  .progress-striped & {
+    @include gradient-striped;
+  }
+}
