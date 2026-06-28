@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>PutPath — الإعدادات</title><link rel="stylesheet" href="assets/app.css"></head>
+<body data-page="settings.html">
+<div class="app"><aside class="side" id="side"></aside><div class="main"><header class="topbar" id="top"></header><main class="view"><div class="pad">
+<h2 class="page">الإعدادات</h2><p class="sub">الشركة · الأدوار · إعدادات الـ AI · الأمان · الخطة</p>
+<div class="tabs"><span class="on">عام</span><span>الأدوار والصلاحيات</span><span>إعدادات AI</span><span>قواعد الموافقة</span><span>الأمان</span><span>الخطة والفوترة</span></div>
+<div class="grid2">
+  <div class="card"><h3>إعدادات الـ AI</h3>
+    <div class="field"><label>الوكيل الافتراضي</label><select><option>Master / Router</option><option>Fuel Investigator</option></select></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0"><span class="small">تفعيل الوكلاء</span><span class="toggle on"></span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0"><span class="small">موافقة بشرية للأفعال الخطرة (ClawPatrol)</span><span class="toggle on"></span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0"><span class="small">حدّ تكلفة الـ LLM لكل عميل</span><span class="toggle on"></span></div>
+  </div>
+  <div class="card"><h3>الأمان</h3>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0"><span class="small">المصادقة الثنائية (2FA)</span><span class="toggle on"></span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0"><span class="small">جلسة واحدة لكل مستخدم</span><span class="toggle on"></span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0"><span class="small">تأكيد الأفعال الحسّاسة</span><span class="toggle on"></span></div>
+    <div class="field" style="margin-top:8px"><label>مدة الاحتفاظ بالبيانات</label><select><option>١٢ شهرًا</option><option>٢٤ شهرًا</option></select></div>
+  </div>
+  <div class="card"><h3>الشركة (العميل)</h3>
+    <div class="field"><label>الاسم</label><input value="شركة الباوني للنقل"></div>
+    <div class="grid2"><div class="field"><label>اللغة</label><select><option>العربية</option><option>English</option></select></div><div class="field"><label>المنطقة الزمنية</label><select><option>+03:00 الرياض</option></select></div></div>
+  </div>
+  <div class="card"><h3>الخطة والفوترة</h3>
+    <div class="muted small" style="line-height:1.9">الخطة الحالية: <b style="color:var(--accent2)">Pro</b><br>حدّ الأجهزة: ١٢٤ / ١٥٠<br>تجديد الاشتراك: ٢٠٢٦-٠٩-٠١<br>الموزّع: المالك</div>
+    <div style="margin-top:10px"><button class="btn">ترقية الخطة</button></div>
+  </div>
+</div>
+</div></main></div></div><script src="assets/app.js"></script></body></html>

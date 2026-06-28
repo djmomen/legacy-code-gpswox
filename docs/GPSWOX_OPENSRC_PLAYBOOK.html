@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPSWOX × opensrc — دليل تعدين الخبرة</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", Tahoma, sans-serif; background: rgb(15,17,23); color: rgb(226,232,240); line-height: 1.8; padding: 20px; }
+.container { max-width: 1150px; margin: 0 auto; padding: 20px; }
+h1 { text-align: center; font-size: 1.85rem; background: linear-gradient(135deg, rgb(102,126,234), rgb(118,75,162)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
+.subtitle { text-align: center; color: rgb(148,163,184); font-size: 0.9rem; margin-bottom: 28px; }
+h2 { font-size: 1.28rem; color: rgb(124,58,237); border-right: 4px solid rgb(124,58,237); padding-right: 12px; margin: 38px 0 14px; }
+h3 { font-size: 1.0rem; color: rgb(167,139,250); margin: 20px 0 8px; }
+p { color: rgb(203,213,225); margin-bottom: 10px; font-size: 0.9rem; }
+pre { background: rgb(26,29,46); border: 1px solid rgb(45,52,82); border-radius: 10px; padding: 14px; overflow-x: auto; margin: 10px 0 18px; font-size: 0.78rem; line-height: 1.6; direction: ltr; text-align: left; }
+code { color: rgb(167,139,250); font-family: monospace; font-size:0.86em; }
+pre code { color: rgb(226,232,240); }
+.comment { color: rgb(107,114,128); } .cmd { color: rgb(52,211,153); } .file { color: rgb(96,165,250); } .kw { color: rgb(244,114,182); }
+.divider { border: 0; border-top: 1px solid rgb(45,52,82); margin: 30px 0; }
+.note { background: rgb(26,29,46); border-right: 4px solid rgb(52,211,153); border-radius: 8px; padding: 12px 15px; margin: 12px 0 18px; font-size: 0.86rem; }
+.note strong { color: rgb(52,211,153); }
+.note.tip { border-right-color: rgb(244,114,182); } .note.tip strong { color: rgb(244,114,182); }
+.recipe { background: rgb(30,34,53); border: 1px solid rgb(45,52,82); border-radius: 12px; padding: 16px; margin: 14px 0; }
+.recipe h3 { margin-top: 0; }
+.lbl { display:inline-block; font-size:0.7rem; padding:1px 8px; border-radius:10px; font-family:monospace; font-weight:700; margin-left:6px; }
+.l-goal { background:rgba(167,139,250,0.16); color:rgb(167,139,250); }
+.l-extract { background:rgba(52,211,153,0.15); color:rgb(52,211,153); }
+.l-target { background:rgba(96,165,250,0.15); color:rgb(96,165,250); }
+ul { margin: 4px 22px 12px; } li { color: rgb(203,213,225); font-size:0.87rem; margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+    <h1>GPSWOX × opensrc — دليل تعدين الخبرة</h1>
+    <p class="subtitle">وصفات جاهزة لتعدين كود GPSWOX بـ opensrc واستخراج معرفة الدومين لإعادة بنائها في Python</p>
+
+    <h2>الإعداد</h2>
+    <p>opensrc يجلب الكود المصدري لأي ريبو محليًا ليقرأه الـ agent. اجلب GPSWOX مرة واحدة:</p>
+    <pre><code><span class="cmd">npx opensrc path github:djmomen/legacy-code-gpswox</span>   <span class="comment"># يطبع مسارًا محليًا مخبّأً في ~/.opensrc/</span>
+
+<span class="comment"># خزّن المسار في متغيّر واستخدمه في أي أمر:</span>
+<span class="cmd">GW=$(npx opensrc path github:djmomen/legacy-code-gpswox)</span>
+<span class="cmd">rg "fuel" "$GW/Tobuli/Sensors"</span>     <span class="comment"># ابحث في الكود</span>
+<span class="cmd">cat "$GW/config/tracker.php"</span>        <span class="comment"># اقرأ ملفًا</span></code></pre>
+    <div class="note tip"><strong>طريقة العمل:</strong> لكل وصفة أدناه: <span class="lbl l-goal">الهدف</span> ما تريد فهمه · أوامر التعدين · <span class="lbl l-extract">استخرج</span> ما تأخذه · <span class="lbl l-target">Python</span> أين يذهب. أعطِ هذا الملف للـ agent (في Spec Kitty/Claude Code) ليتبع الوصفات.</div>
+
+    <hr class="divider">
+
+    <!-- R1 -->
+    <div class="recipe">
+        <h3>① ربط Traccar <span class="lbl l-goal">الهدف</span></h3>
+        <p>افهم كيف تتدفّق البيانات من الأجهزة عبر Traccar إلى الأعمال.</p>
+        <pre><code><span class="cmd">cat "$GW/config/tracker.php"</span>                          <span class="comment"># إعداد Traccar: المنافذ، DB، Redis</span>
+<span class="cmd">cat "$GW/Tobuli/Entities/TraccarDevice.php"</span>          <span class="comment"># مرآة حالة الجهاز (uniqueId=IMEI)</span>
+<span class="cmd">rg "traccar_device_id|traccar" "$GW/Tobuli/Entities/Device.php"</span>
+<span class="cmd">cat "$GW/Tobuli/Entities/TrackerPort.php"</span>            <span class="comment"># منافذ البروتوكولات</span>
+<span class="cmd">ls "$GW/Tobuli/Protocols/Protocols"</span>                  <span class="comment"># 44 بروتوكول</span></code></pre>
+        <span class="lbl l-extract">استخرج</span>
+        <ul><li>المنافذ القياسية لكل بروتوكول، ربط <code>devices.traccar_device_id</code>، حقول الحالة اللحظية، آلية registerUnknown.</li></ul>
+        <span class="lbl l-target">Python</span>
+        <ul><li><code>tracking/infrastructure/traccar_adapter.py</code> (REST/WS/Forwarding خلف <code>TraccarPort</code>).</li></ul>
+    </div>
+
+    <!-- R2 -->
+    <div class="recipe">
+        <h3>② تقسيم قواعد المواقع <span class="lbl l-goal">الهدف</span></h3>
+        <pre><code><span class="cmd">cat "$GW/Tobuli/Services/DatabaseService.php"</span>        <span class="comment"># التقسيم الديناميكي</span>
+<span class="cmd">rg "user_database_pivot|database{|HasManyTable" "$GW/Tobuli"</span>
+<span class="cmd">cat "$GW/Tobuli/Entities/TraccarPosition.php"</span></code></pre>
+        <span class="lbl l-extract">استخرج</span>
+        <ul><li>كيف يُسنَد المستخدم لقاعدة مواقع، بنية جدول-لكل-جهاز، استراتيجية الاحتفاظ.</li></ul>
+        <span class="lbl l-target">Python</span>
+        <ul><li>TimescaleDB hypertable واحد بـ <code>owner_id</code> + retention/compression (بدل التقسيم اليدوي).</li></ul>
+    </div>
+
+    <!-- R3 -->
+    <div class="recipe">
+        <h3>③ المستشعرات والاستخلاص <span class="lbl l-goal">الهدف</span> — أثمن معرفة</h3>
+        <pre><code><span class="cmd">ls "$GW/Tobuli/Sensors/Types"</span>                        <span class="comment"># ~35 نوع</span>
+<span class="cmd">cat "$GW/Tobuli/Sensors/Types/FuelTank.php"</span>          <span class="comment"># معايرة الخزان</span>
+<span class="cmd">cat "$GW/Tobuli/Sensors/Types/EngineHours.php"</span>
+<span class="cmd">cat "$GW/Tobuli/Sensors/Types/Ignition.php"</span>
+<span class="cmd">ls "$GW/Tobuli/Sensors/Extractions"; cat "$GW/Tobuli/Sensors/Extraction.php"</span>
+<span class="cmd">rg "calibration|tank|formula|threshold" "$GW/Tobuli/Sensors"</span></code></pre>
+        <span class="lbl l-extract">استخرج</span>
+        <ul><li>منطق معايرة الوقود (جداول tank)، حساب ساعات المحرك، عتبات القيادة الحادة، استخلاص ACC/Ignition، أنواع منطقي/رقمي/نصّي.</li></ul>
+        <span class="lbl l-target">Python</span>
+        <ul><li><code>tracking/domain/sensors/</code> — كل نوع كـ <code>SensorExtractor</code> strategy مختبَر بـ unit tests.</li></ul>
+    </div>
+
+    <!-- R4 -->
+    <div class="recipe">
+        <h3>④ التقارير <span class="lbl l-goal">الهدف</span></h3>
+        <pre><code><span class="cmd">ls "$GW/Tobuli/Reports/Reports"</span>                      <span class="comment"># ~100 تقرير</span>
+<span class="cmd">cat "$GW/Tobuli/Reports/ReportManager.php"</span>           <span class="comment"># المحرّك</span>
+<span class="cmd">cat "$GW/Tobuli/Reports/Reports/FuelFillingsReport.php"</span>
+<span class="cmd">cat "$GW/Tobuli/Reports/Reports/DrivesStopsReport.php"</span>
+<span class="cmd">cat "$GW/Tobuli/Reports/ReportTypesConfig.php"</span>        <span class="comment"># كل الأنواع وإعداداتها</span></code></pre>
+        <span class="lbl l-extract">استخرج</span>
+        <ul><li>منطق كل تقرير أساسي (وقود، رحلات/توقفات، مناطق، سرعة، ساعات محرك)، الأعمدة المتوقعة، التجميع الزمني.</li></ul>
+        <span class="lbl l-target">Python</span>
+        <ul><li>محرّك تقارير واحد بـ <strong>Polars</strong> + ١٠–١٥ تقريرًا أساسيًا؛ الباقي يولّده Report Analyst agent.</li></ul>
+    </div>
+
+    <!-- R5 -->
+    <div class="recipe">
+        <h3>⑤ التنبيهات والأحداث <span class="lbl l-goal">الهدف</span></h3>
+        <pre><code><span class="cmd">cat "$GW/Tobuli/Entities/Alert.php"</span>
+<span class="cmd">ls "$GW/Tobuli/Entities" | rg -i "alert|event"</span>
+<span class="cmd">cat "$GW/Tobuli/Services/EventWriteService.php"</span>
+<span class="cmd">cat "$GW/Tobuli/Services/ConditionService.php"</span>       <span class="comment"># منطق الشروط</span></code></pre>
+        <span class="lbl l-extract">استخرج</span>
+        <ul><li>أنواع التنبيهات وشروطها (geofence, overspeed, fuel, ignition, offline…)، آلية توليد الحدث، الإشعار.</li></ul>
+        <span class="lbl l-target">Python</span>
+        <ul><li><code>alerting/</code> — <code>AlertRule</code> + rule engine يستهلك <code>PositionReceived</code> → <code>Event</code> → notification.</li></ul>
+    </div>
+
+    <!-- R6 -->
+    <div class="recipe">
+        <h3>⑥ الأوامر (GPRS/SMS) <span class="lbl l-goal">الهدف</span></h3>
+        <pre><code><span class="cmd">ls "$GW/Tobuli/Services/Commands"</span>
+<span class="cmd">cat "$GW/Tobuli/Services/Commands/SendCommandService.php"</span>
+<span class="cmd">cat "$GW/Tobuli/Protocols/Commands.php"</span>
+<span class="cmd">rg "engine|stop|cut|relay" "$GW/Tobuli/Protocols/Protocols"</span></code></pre>
+        <span class="lbl l-extract">استخرج</span>
+        <ul><li>قوالب الأوامر لكل بروتوكول، قنوات الإرسال (GPRS عبر Traccar / SMS)، أوامر الأمان (إيقاف محرّك).</li></ul>
+        <span class="lbl l-target">Python</span>
+        <ul><li><code>tracking/commands/</code> + إرسال عبر <code>TraccarPort.send_command()</code> خلف <strong>ClawPatrol + موافقة</strong>.</li></ul>
+    </div>
+
+    <!-- R7 -->
+    <div class="recipe">
+        <h3>⑦ الأمان والصلاحيات <span class="lbl l-goal">الهدف</span></h3>
+        <pre><code><span class="cmd">cat "$GW/config/auth.php" "$GW/config/permissions.php"</span>
+<span class="cmd">ls "$GW/app/Http/Middleware"</span>
+<span class="cmd">cat "$GW/Tobuli/Services/PermissionService.php"</span>
+<span class="cmd">rg "perm\(|can\(|manager_id" "$GW/Tobuli/Entities/User.php"</span></code></pre>
+        <span class="lbl l-extract">استخرج</span>
+        <ul><li>نموذج الصلاحيات (module→view/edit/remove)، الـ guards، 2FA، ConfirmedAction، OneSessionPerUser، PermissionsHash، منطق الموزّع.</li></ul>
+        <span class="lbl l-target">Python</span>
+        <ul><li><code>accounts/</code> — RBAC + DRF permissions؛ ConfirmedAction → ClawPatrol.</li></ul>
+    </div>
+
+    <!-- R8 -->
+    <div class="recipe">
+        <h3>⑧ نموذج العملاء والـ Schema <span class="lbl l-goal">الهدف</span></h3>
+        <pre><code><span class="cmd">rg "manager_id|billing_plan_id|devices_limit|subscription" "$GW/Tobuli/Entities/User.php"</span>
+<span class="cmd">cat "$GW/Tobuli/Entities/Client.php" "$GW/Tobuli/Entities/BillingPlan.php"</span>
+<span class="cmd">ls "$GW/database/migrations" | rg "users|devices|billing|pivot"</span>
+<span class="cmd">rg "user_device_pivot" "$GW/Tobuli"</span></code></pre>
+        <span class="lbl l-extract">استخرج</span>
+        <ul><li>شجرة manager، خطط الاشتراك والحدود، العزل بالملكية (user_device_pivot)، الحقول الأساسية للجداول.</li></ul>
+        <span class="lbl l-target">Python</span>
+        <ul><li><code>accounts/</code> — Account(manager tree) + Plan + global <code>owner_id</code> scope.</li></ul>
+    </div>
+
+    <!-- R9 -->
+    <div class="recipe">
+        <h3>⑨ الخدمات والإعدادات <span class="lbl l-goal">الهدف</span></h3>
+        <pre><code><span class="cmd">ls "$GW/Tobuli/Services"</span>                              <span class="comment"># كتالوج ~60 خدمة</span>
+<span class="cmd">ls "$GW/config"</span>                                       <span class="comment"># ~35 ملف إعداد</span>
+<span class="cmd">cat "$GW/config/limits.php" "$GW/config/tobuli.php"</span>
+<span class="cmd">cat "$GW/Tobuli/Services/ForwardService.php"</span>          <span class="comment"># دفع بيانات لطرف ثالث</span></code></pre>
+        <span class="lbl l-extract">استخرج</span>
+        <ul><li>خريطة الميزات الكاملة، الحدود (limits)، إعدادات SMS/maps/fcm/webhook، منطق Forwarding.</li></ul>
+        <span class="lbl l-target">Python</span>
+        <ul><li>تخطيط الـ <code>.env</code> (pydantic-settings) + Django apps لكل سياق.</li></ul>
+    </div>
+
+    <hr class="divider">
+    <div class="note"><strong>ترتيب التعدين الموصى به:</strong> ① Traccar → ⑧ العملاء/Schema → ③ المستشعرات → ⑤ التنبيهات → ④ التقارير → ⑥ الأوامر → ⑦ الأمان → ② التقسيم → ⑨ الخدمات. خزّن مخرجات كل وصفة كملف <strong>OKF/MD</strong> في <code>ai-layer/knowledge/</code> — فتخدم التطوير (specs) والتشغيل (RAG) معًا.</div>
+
+</div>
+</body>
+</html>

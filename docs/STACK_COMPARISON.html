@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مقارنة الـ Stack: اتفاقنا مقابل PRD (مُراجَعة)</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", Tahoma, sans-serif; background: rgb(15,17,23); color: rgb(226,232,240); line-height: 1.8; padding: 20px; }
+.container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+h1 { text-align: center; font-size: 1.9rem; background: linear-gradient(135deg, rgb(102,126,234), rgb(118,75,162)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
+.subtitle { text-align: center; color: rgb(148,163,184); font-size: 0.92rem; margin-bottom: 24px; }
+h2 { font-size: 1.35rem; color: rgb(124,58,237); border-right: 4px solid rgb(124,58,237); padding-right: 12px; margin: 40px 0 16px; }
+p { color: rgb(203,213,225); margin-bottom: 12px; font-size: 0.93rem; }
+.table-wrap { overflow-x: auto; margin: 14px 0 24px; border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.84rem; background: rgb(30,34,53); border-radius: 10px; overflow: hidden; }
+thead tr { background: linear-gradient(135deg, rgb(76,29,149), rgb(109,40,217)); }
+thead th { padding: 11px 13px; text-align: right; color: #fff; font-weight: 600; }
+tbody tr { border-bottom: 1px solid rgb(45,52,82); }
+tbody tr:hover { background: rgb(37,42,61); }
+tbody td { padding: 10px 13px; color: rgb(203,213,225); vertical-align: top; }
+tbody td:first-child { color: rgb(167,139,250); font-weight: 600; font-size: 0.82rem; }
+.badge { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 12px; font-weight: 700; white-space: nowrap; font-family: monospace; }
+.win-ours { background: rgba(52,211,153,0.16); color: rgb(52,211,153); border: 1px solid rgba(52,211,153,0.4); }
+.win-prd { background: rgba(96,165,250,0.16); color: rgb(96,165,250); border: 1px solid rgba(96,165,250,0.4); }
+.win-hybrid { background: rgba(251,191,36,0.14); color: rgb(251,191,36); border: 1px solid rgba(251,191,36,0.4); }
+.win-new { background: rgba(244,114,182,0.14); color: rgb(244,114,182); border: 1px solid rgba(244,114,182,0.4); }
+.divider { border: 0; border-top: 1px solid rgb(45,52,82); margin: 36px 0; }
+.note { background: rgb(26,29,46); border-right: 4px solid rgb(52,211,153); border-radius: 8px; padding: 13px 15px; margin: 14px 0 22px; font-size: 0.88rem; }
+.note strong { color: rgb(52,211,153); }
+.note.warn { border-right-color: rgb(251,191,36); } .note.warn strong { color: rgb(251,191,36); }
+.note.blue { border-right-color: rgb(96,165,250); } .note.blue strong { color: rgb(96,165,250); }
+.note.pink { border-right-color: rgb(244,114,182); } .note.pink strong { color: rgb(244,114,182); }
+.score { display:flex; gap:14px; flex-wrap:wrap; margin:14px 0 24px; }
+.score-card { flex:1; min-width:200px; background:rgb(30,34,53); border:1px solid rgb(45,52,82); border-radius:12px; padding:16px; text-align:center; }
+.score-card .num { font-size:2rem; font-weight:800; font-family:monospace; }
+.score-card.ours { border-top:3px solid rgb(52,211,153); } .score-card.ours .num{ color:rgb(52,211,153);}
+.score-card.prd { border-top:3px solid rgb(96,165,250); } .score-card.prd .num{ color:rgb(96,165,250);}
+.score-card.hy { border-top:3px solid rgb(251,191,36); } .score-card.hy .num{ color:rgb(251,191,36);}
+.legend { font-size:0.82rem; color:rgb(148,163,184); margin-bottom:18px; }
+code { color: rgb(167,139,250); font-family: monospace; font-size:0.85em; }
+.final-table td:first-child { color: rgb(52,211,153); }
+.rev { background: rgb(26,29,46); border:1px solid rgb(45,52,82); border-radius:10px; padding:14px 16px; margin:0 0 24px; font-size:0.86rem; }
+.rev h3 { color: rgb(244,114,182); font-size:1rem; margin-bottom:8px; }
+.rev li { margin: 4px 0; color: rgb(203,213,225); }
+</style>
+</head>
+<body>
+<div class="container">
+
+    <h1>تحديث الـ Stack: اتفاقنا مقابل PRD</h1>
+    <p class="subtitle">PutPath — منصّة Agentic لإدارة الأسطول واللوجستيك تخدم <strong>عملاء</strong> (شركات أساطيل ولوجستيك)</p>
+
+    <div class="rev">
+        <h3>ما صحّحته في هذه المراجعة</h3>
+        <ul>
+            <li>✅ <strong>AI Runtime = Flue</strong>: حدّثت الحكم لصالح Flue باعتباره الأفضل لمشروعك، مع التبرير الهندسي الصادق (لا مجاملة).</li>
+            <li>✅ <strong>«مستأجرين» → «عملاء»</strong>: المنصّة تخدم عملاء (شركات أساطيل/لوجستيك)؛ استبدلت لغة tenant بـ «عميل/شركة» مع الإبقاء على عزل بيانات كل عميل.</li>
+            <li>✅ <strong>إضافة TimesFM</strong>: طبقة تنبؤ بالسلاسل الزمنية (Google Research) للصيانة والوقود والـ ETA والاستخدام.</li>
+            <li>✅ <strong>تنظيف دقّة</strong>: توضيح أن LiteLLM محايد للّغة (يعمل مع Flue/TS عبر HTTP proxy)، وأن الفوز/الخسارة آراء هندسية لا حقائق مطلقة.</li>
+        </ul>
+    </div>
+
+    <div class="legend">
+        <span class="badge win-ours">اتفاقنا</span> الـ stack الذي صممناه &nbsp;·&nbsp;
+        <span class="badge win-prd">PRD</span> الـ stack في الـ PRD &nbsp;·&nbsp;
+        <span class="badge win-hybrid">دمج</span> الأفضل هو الجمع &nbsp;·&nbsp;
+        <span class="badge win-new">جديد</span> إضافة جديدة
+    </div>
+
+    <!-- TOOLS -->
+    <h2>أدوات التطوير (متفق عليها — ليست محل مقارنة)</h2>
+    <div class="table-wrap"><table>
+        <thead><tr><th>الأداة</th><th>الدور الصحيح</th><th>الاستخدام في PutPath</th></tr></thead>
+        <tbody>
+            <tr><td>Spec Kitty</td><td>Spec-Driven Development CLI: <code>spec→plan→tasks→next→review→accept→merge</code> + Kanban + git worktrees + agents متوازية</td><td>تحويل الـ PRD إلى specs تنفيذية محكومة؛ القرارات المعمارية تُثبَّت في الـ constitution</td></tr>
+            <tr><td>opensrc</td><td>يجلب الكود المصدري لأي حزمة/ريبو ليقرأه الـ agent بعمق</td><td><code>opensrc path github:djmomen/legacy-code-gpswox</code> لتعدين خبرة GPSWOX (alerts, sensors, reports, fuel, maintenance…)</td></tr>
+        </tbody>
+    </table></div>
+
+    <hr class="divider">
+
+    <!-- ========== TABLE 1: STARTUP ========== -->
+    <h2>① جدول Startup — مقارنة بنود الـ Stack</h2>
+    <div class="table-wrap"><table>
+        <thead><tr><th>البُعد</th><th>اتفاقنا</th><th>PRD</th><th>الفائز</th><th>لماذا (رأي هندسي)</th></tr></thead>
+        <tbody>
+            <tr>
+                <td>إطار الـ Backend</td>
+                <td>Python <strong>FastAPI</strong></td>
+                <td>Python <strong>Django</strong></td>
+                <td><span class="badge win-prd">PRD</span></td>
+                <td>PutPath منتج SaaS مليء بالـ CRUD/RBAC/Admin/عزل عملاء → Django «batteries-included» (ORM, Admin, Auth, DRF) يوفّر شهورًا. FastAPI أرشق لكن تبني كل ذلك يدويًا. (الأداء غير حرج لأن Traccar يتولّى الـ ingestion).</td>
+            </tr>
+            <tr>
+                <td>نمط المعمارية</td>
+                <td>Modular Monolith + <strong>DDD + Clean + Hexagonal + MVCS</strong></td>
+                <td>طبقات Django + apps + workers</td>
+                <td><span class="badge win-ours">اتفاقنا</span></td>
+                <td>الانضباط المعماري أفضل للصيانة وعزل Traccar/LLM/Flue — يُطبَّق <em>بأسلوب Django</em> (كل Bounded Context = Django app، Hexagonal على الحواف، service layer). نأخذ الانضباط لا الحرفية.</td>
+            </tr>
+            <tr>
+                <td>AI Runtime</td>
+                <td><strong>Flue</strong> (TypeScript)</td>
+                <td><strong>Hermes-Agent</strong> (Python)</td>
+                <td><span class="badge win-ours">Flue ✓</span></td>
+                <td><strong>قرارك صحيح هندسيًا:</strong> Flue harness حديث (sessions/tools/skills/sandbox/durability) شبيه بـ Claude Code، بلا lock-in. يُشغَّل كـ <em>خدمة AI مستقلة</em> يكلّمها Django عبر <code>AIAgentPort</code> — وهذا نمط إنتاجي شائع. وفريقك يعرف TS أصلًا (React). الميزة الأهم في منتج agentic-first هي جودة الـ harness، وفيها Flue يتفوّق. (السلبية الوحيدة: خدمة بلغة ثانية — مقبولة تمامًا).</td>
+            </tr>
+            <tr>
+                <td>AI Router</td>
+                <td><strong>LiteLLM</strong></td>
+                <td><strong>Manifest</strong></td>
+                <td><span class="badge win-ours">اتفاقنا</span></td>
+                <td>LiteLLM أنضج وأوسع تبنّيًا (proxy موحّد، fallback، تتبع تكلفة) و<strong>محايد للّغة</strong> فيعمل مع Flue/TS عبر HTTP. فكرة Manifest (حدود تكلفة لكل عميل) تُبنى فوقه.</td>
+            </tr>
+            <tr>
+                <td>طبقة المعرفة / RAG</td>
+                <td><strong>OKF + Markdown</strong></td>
+                <td><strong>Surya OCR + vector RAG</strong></td>
+                <td><span class="badge win-hybrid">دمج</span></td>
+                <td>نطاق PutPath يشمل PDF ممسوحة وصور ولقطات ونماذج → <em>يتطلب</em> OCR + vector RAG. وOKF/MD يتفوّق للمعرفة المنسّقة (قواعد الأسطول، schemas، SOPs). الأفضل: <strong>Surya+vector للملفات غير المنظّمة + OKF/MD للمعرفة المنسّقة</strong> خلف <code>KnowledgePort</code> واحد.</td>
+            </tr>
+            <tr>
+                <td>طبقة الأمان</td>
+                <td>RBAC + موافقات</td>
+                <td>RBAC + موافقات + <strong>ClawPatrol</strong></td>
+                <td><span class="badge win-prd">PRD</span></td>
+                <td>النظام agentic ينفّذ أفعالًا خطرة (أوامر أجهزة، حذف، مراسلة) → جدار حماية وقت التشغيل + بوابة موافقة ضرورية.</td>
+            </tr>
+            <tr>
+                <td>عزل بيانات العملاء</td>
+                <td>Shared DB + <code>customer_id</code> (row-level)</td>
+                <td>عزل لكل عميل على مستوى Django</td>
+                <td><span class="badge win-prd">PRD</span></td>
+                <td>المنصّة تخدم عدّة عملاء (شركات أساطيل) ببيانات معزولة. منظومة Django (middleware + scopes) أنضج وجاهزة لفرض الفلترة بـ <code>customer_id</code> على كل استعلام.</td>
+            </tr>
+            <tr>
+                <td>التحليلات وتحسين المسار</td>
+                <td>غير محدّد</td>
+                <td><strong>Polars</strong> + <strong>VROOM</strong></td>
+                <td><span class="badge win-prd">PRD</span></td>
+                <td>اختيارات ملموسة وممتازة: Polars لتحليلات ضخمة سريعة، VROOM لتحسين المسارات.</td>
+            </tr>
+        </tbody>
+    </table></div>
+    <div class="score">
+        <div class="score-card ours"><div class="num">3</div>اتفاقنا<br><span style="font-size:0.75rem;color:#94a3b8">المعمارية · Flue · LiteLLM</span></div>
+        <div class="score-card prd"><div class="num">4</div>PRD<br><span style="font-size:0.75rem;color:#94a3b8">Django · أمان · عزل · تحليلات</span></div>
+        <div class="score-card hy"><div class="num">1</div>دمج<br><span style="font-size:0.75rem;color:#94a3b8">المعرفة/RAG</span></div>
+    </div>
+    <div class="note blue"><strong>نتيجة Startup:</strong> تقارب حقيقي. نأخذ من PRD: Django، ClawPatrol، عزل العملاء، Polars/VROOM. ونأخذ من اتفاقنا: <strong>الانضباط المعماري</strong>، <strong>Flue</strong>، <strong>LiteLLM</strong>. والمعرفة <strong>هجينة</strong>.</div>
+
+    <hr class="divider">
+
+    <!-- ========== TABLE 2: SCALE ========== -->
+    <h2>② جدول Scale — مقارنة بنود الـ Stack</h2>
+    <div class="table-wrap"><table>
+        <thead><tr><th>البُعد</th><th>اتفاقنا</th><th>PRD</th><th>الفائز</th><th>لماذا (رأي هندسي)</th></tr></thead>
+        <tbody>
+            <tr>
+                <td>تفكيك الخدمات</td>
+                <td><strong>Microservices كاملة</strong> مبكرًا</td>
+                <td>Django مُمنهَج + workers (pragmatic)</td>
+                <td><span class="badge win-prd">PRD</span></td>
+                <td>Microservices مبكرة = ألم تشغيلي بلا عائد. نهج PRD البراغماتي أصحّ حتى تظهر أعراض scale حقيقية، ثم تُستخرج الخدمات تدريجيًا.</td>
+            </tr>
+            <tr>
+                <td>تخزين السلاسل الزمنية</td>
+                <td><strong>TimescaleDB</strong> للمواقع</td>
+                <td>PostgreSQL عام</td>
+                <td><span class="badge win-ours">اتفاقنا</span></td>
+                <td>مواقع GPS = time-series ضخمة. TimescaleDB أفضل للاحتفاظ والاستعلام والـ downsampling — ويغذّي TimesFM للتنبؤ.</td>
+            </tr>
+            <tr>
+                <td>ناقل الأحداث</td>
+                <td><strong>Kafka</strong></td>
+                <td>غير محدّد بقوة</td>
+                <td><span class="badge win-ours">اتفاقنا</span></td>
+                <td>الحلقة الـ agentic event-driven تحتاج عمودًا فقريًا. ابدأ بـ <strong>Redis Streams</strong> وارتقِ لـ Kafka عند الحجم.</td>
+            </tr>
+            <tr>
+                <td>إطلاق الميزات / المراقبة</td>
+                <td><strong>Istio</strong> Service Mesh</td>
+                <td><strong>GrowthBook</strong> flags + observability</td>
+                <td><span class="badge win-prd">PRD</span></td>
+                <td>Istio ثقيل ولا يُبرّر إلا مع عشرات الخدمات. GrowthBook قيمته فورية (beta، A/B، إطفاء طارئ). Istio سابق لأوانه.</td>
+            </tr>
+            <tr>
+                <td>القراءة/الكتابة</td>
+                <td>CQRS + <strong>Event Sourcing</strong></td>
+                <td>Read Models بسيطة عند الحاجة</td>
+                <td><span class="badge win-prd">PRD</span></td>
+                <td>Event Sourcing معقّد جدًا وبلا مبرّر قوي هنا. CQRS Read Models للتقارير الثقيلة كافٍ.</td>
+            </tr>
+            <tr>
+                <td>النسخ الاحتياطي / DR</td>
+                <td>غير محدّد</td>
+                <td><strong>Databasus + WAL</strong> + backups سحابية</td>
+                <td><span class="badge win-prd">PRD</span></td>
+                <td>خطة DR ملموسة (نسخ، اختبار استرجاع، WAL).</td>
+            </tr>
+            <tr>
+                <td>توجيه النماذج عند الحجم</td>
+                <td><strong>LiteLLM</strong></td>
+                <td>Manifest</td>
+                <td><span class="badge win-ours">اتفاقنا</span></td>
+                <td>LiteLLM ينجز التوجيه + تتبع التكلفة + fallback بنضج أعلى؛ نضيف حدود العميل فوقه.</td>
+            </tr>
+        </tbody>
+    </table></div>
+    <div class="score">
+        <div class="score-card ours"><div class="num">3</div>اتفاقنا<br><span style="font-size:0.75rem;color:#94a3b8">TimescaleDB · ناقل أحداث · LiteLLM</span></div>
+        <div class="score-card prd"><div class="num">4</div>PRD<br><span style="font-size:0.75rem;color:#94a3b8">تفكيك · flags · CQRS · DR</span></div>
+        <div class="score-card hy"><div class="num">0</div>دمج</div>
+    </div>
+    <div class="note warn"><strong>نتيجة Scale:</strong> نهج PRD البراغماتي يكسب الإطار (لا microservices/Istio/ES مبكرًا). نأخذ من اتفاقنا: <strong>TimescaleDB</strong>، <strong>ناقل أحداث</strong> (Redis Streams→Kafka)، و<strong>LiteLLM</strong>.</div>
+
+    <hr class="divider">
+
+    <!-- ========== TIMESFM ========== -->
+    <h2>③ إضافة جديدة: TimesFM — طبقة التنبؤ</h2>
+    <div class="note pink"><strong>TimesFM</strong> (Google Research): نموذج تأسيسي للتنبؤ بالسلاسل الزمنية (200M معامل، مدرّب على 100 مليار نقطة، تنبؤ zero-shot، بايثون). يعمل كـ <strong>خدمة/worker تنبؤ</strong> تقرأ من TimescaleDB. استخداماته في PutPath: التنبؤ بالصيانة قبل الأعطال، توقّع استهلاك الوقود وكشف الشذوذ (متوقَّع مقابل فعلي)، تقدير الـ ETA، وتوقّع الاستخدام/الطلب — وقوده يصبّ في الـ AI agents (Fuel Investigator، Maintenance Watcher).</div>
+
+    <hr class="divider">
+
+    <!-- ========== FINAL STACK ========== -->
+    <h2>④ الـ Stack النهائي المُحدَّث</h2>
+    <div class="table-wrap"><table class="final-table">
+        <thead><tr><th>الطبقة</th><th>القرار النهائي</th><th>المصدر</th></tr></thead>
+        <tbody>
+            <tr><td>محرّك التتبّع</td><td>Traccar (fork نظيف، upstream-compatible)</td><td>PRD</td></tr>
+            <tr><td>Backend</td><td>Python <strong>Django</strong> + DRF (مصدر الحقيقة، RBAC، موافقات، audit)</td><td>PRD</td></tr>
+            <tr><td>تنظيم الكود</td><td>Bounded Contexts كـ Django apps + <strong>Hexagonal على الحواف</strong> + service layer</td><td>اتفاقنا</td></tr>
+            <tr><td>Frontend</td><td>React (map-first)</td><td>الاثنان</td></tr>
+            <tr><td>AI Runtime</td><td><strong>Flue</strong> (خدمة TS مستقلة، خلف <code>AIAgentPort</code>)</td><td>اتفاقنا</td></tr>
+            <tr><td>AI Router</td><td><strong>LiteLLM</strong> (+ حدود تكلفة لكل عميل)</td><td>اتفاقنا</td></tr>
+            <tr><td>المعرفة / RAG</td><td><strong>هجين:</strong> Surya OCR + vector RAG (غير منظّم) + OKF/MD (منسّق) خلف <code>KnowledgePort</code></td><td>دمج</td></tr>
+            <tr><td><strong>التنبؤ</strong></td><td><strong>TimesFM</strong> (worker تنبؤ زمني يقرأ من TimescaleDB)</td><td><span class="badge win-new">جديد</span></td></tr>
+            <tr><td>الأمان</td><td>Django RBAC + Permission Gateway + <strong>ClawPatrol</strong> + audit + موافقات بشرية</td><td>PRD</td></tr>
+            <tr><td>قواعد البيانات</td><td>PostgreSQL (أعمال) + <strong>TimescaleDB</strong> (مواقع/تيليمتري) + vector DB (RAG) + Redis (cache)</td><td>دمج</td></tr>
+            <tr><td>الأحداث</td><td>Redis Streams (بداية) → Kafka (عند الحجم)</td><td>اتفاقنا</td></tr>
+            <tr><td>التحليلات / المسار</td><td>Polars + VROOM (لاحقًا City2Graph، Map3D)</td><td>PRD</td></tr>
+            <tr><td>الإطلاق / DR</td><td>GrowthBook flags + Databasus/WAL backups</td><td>PRD</td></tr>
+            <tr><td>عزل العملاء</td><td>Shared DB + <code>customer_id</code> scope على مستوى Django</td><td>الاثنان</td></tr>
+            <tr><td>سير التطوير</td><td>Spec Kitty (spec-driven) + opensrc (تعدين GPSWOX)</td><td>الاثنان</td></tr>
+            <tr><td>التوسّع</td><td>يبقى Modular Django؛ تُستخرج خدمات (FastAPI/Go للـ ingestion) فقط عند أعراض scale فعلية</td><td>دمج</td></tr>
+        </tbody>
+    </table></div>
+
+    <div class="note"><strong>الخلاصة:</strong> أساس PRD (Django + ClawPatrol + Polars/VROOM + GrowthBook + DR)، مُطعَّم بقراراتك: <strong>Flue</strong> (AI runtime)، <strong>LiteLLM</strong> (router)، <strong>TimescaleDB</strong> + <strong>TimesFM</strong> (سلاسل زمنية وتنبؤ)، <strong>ناقل أحداث</strong>، <strong>انضباط معماري</strong>، ومعرفة <strong>هجينة</strong> — لخدمة <strong>عملاء</strong> أساطيل ولوجستيك ببيانات معزولة.</div>
+
+</div>
+</body>
+</html>

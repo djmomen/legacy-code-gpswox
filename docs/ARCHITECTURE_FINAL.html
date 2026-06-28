@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PutPath — المعمارية والـ Stack النهائي</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", Tahoma, sans-serif; background: rgb(15,17,23); color: rgb(226,232,240); line-height: 1.8; padding: 20px; }
+.container { max-width: 1180px; margin: 0 auto; padding: 20px; }
+h1 { text-align: center; font-size: 1.95rem; background: linear-gradient(135deg, rgb(102,126,234), rgb(118,75,162)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
+.subtitle { text-align: center; color: rgb(148,163,184); font-size: 0.93rem; margin-bottom: 6px; }
+.stack-line { text-align: center; color: rgb(96,165,250); font-size: 0.8rem; font-family: monospace; margin-bottom: 34px; }
+h2 { font-size: 1.35rem; color: rgb(124,58,237); border-right: 4px solid rgb(124,58,237); padding-right: 12px; margin: 42px 0 16px; }
+h3 { font-size: 1.05rem; color: rgb(167,139,250); margin: 24px 0 10px; }
+p { color: rgb(203,213,225); margin-bottom: 12px; font-size: 0.93rem; }
+.table-wrap { overflow-x: auto; margin: 14px 0 24px; border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: rgb(30,34,53); border-radius: 10px; overflow: hidden; }
+thead tr { background: linear-gradient(135deg, rgb(76,29,149), rgb(109,40,217)); }
+thead th { padding: 11px 14px; text-align: right; color: #fff; font-weight: 600; }
+tbody tr { border-bottom: 1px solid rgb(45,52,82); }
+tbody tr:hover { background: rgb(37,42,61); }
+tbody td { padding: 10px 14px; color: rgb(203,213,225); vertical-align: top; }
+tbody td:first-child { color: rgb(167,139,250); font-weight: 600; font-size: 0.83rem; }
+.src { display:inline-block; font-size:0.68rem; padding:1px 7px; border-radius:10px; font-family:monospace; font-weight:700; }
+.s-prd { background:rgba(96,165,250,0.15); color:rgb(96,165,250); }
+.s-ours { background:rgba(52,211,153,0.15); color:rgb(52,211,153); }
+.s-hy { background:rgba(251,191,36,0.14); color:rgb(251,191,36); }
+.s-new { background:rgba(244,114,182,0.14); color:rgb(244,114,182); }
+pre { background: rgb(26,29,46); border: 1px solid rgb(45,52,82); border-radius: 10px; padding: 18px; overflow-x: auto; margin: 14px 0 24px; font-size: 0.8rem; line-height: 1.7; direction: ltr; text-align: left; }
+code { color: rgb(167,139,250); font-family: monospace; font-size:0.86em; }
+pre code { color: rgb(226,232,240); }
+.comment { color: rgb(107,114,128); } .arrow { color: rgb(52,211,153); } .keyword { color: rgb(244,114,182); } .path { color: rgb(96,165,250); }
+.divider { border: 0; border-top: 1px solid rgb(45,52,82); margin: 36px 0; }
+.note { background: rgb(26,29,46); border-right: 4px solid rgb(52,211,153); border-radius: 8px; padding: 13px 15px; margin: 14px 0 22px; font-size: 0.88rem; }
+.note strong { color: rgb(52,211,153); }
+.note.blue { border-right-color: rgb(96,165,250); } .note.blue strong { color: rgb(96,165,250); }
+.note.pink { border-right-color: rgb(244,114,182); } .note.pink strong { color: rgb(244,114,182); }
+.tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin: 14px 0 24px; }
+.tool-card { background: rgb(30,34,53); border: 1px solid rgb(45,52,82); border-top: 3px solid rgb(124,58,237); border-radius: 12px; padding: 16px; }
+.tool-card h4 { color: rgb(167,139,250); margin-bottom: 6px; font-size: 0.98rem; }
+.tool-card p { color: rgb(148,163,184); font-size: 0.83rem; margin: 0; }
+.legend { font-size:0.8rem; color:rgb(148,163,184); margin:-6px 0 18px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+    <h1>PutPath — المعمارية والـ Stack النهائي</h1>
+    <p class="subtitle">منصّة Agentic لإدارة الأسطول واللوجستيك · نموذج عملاء مثل GPSWOX · فوق Traccar</p>
+    <p class="stack-line">Traccar · Django · React · Flue · LiteLLM · Surya+RAG+OKF/MD · TimesFM · TimescaleDB · ClawPatrol · Polars · VROOM</p>
+    <p class="legend">مصدر القرار:
+        <span class="src s-prd">PRD</span>
+        <span class="src s-ours">اتفاقنا</span>
+        <span class="src s-hy">دمج</span>
+        <span class="src s-new">جديد</span>
+    </p>
+
+    <!-- ========== 1. FINAL STACK ========== -->
+    <h2>① الـ Stack النهائي</h2>
+    <div class="table-wrap"><table>
+        <thead><tr><th>الطبقة</th><th>القرار النهائي</th><th>المصدر</th></tr></thead>
+        <tbody>
+            <tr><td>محرّك التتبّع</td><td>Traccar (fork نظيف، upstream-compatible، عبر Adapter)</td><td><span class="src s-prd">PRD</span></td></tr>
+            <tr><td>Backend</td><td>Python <strong>Django</strong> + DRF — مصدر الحقيقة (RBAC، خطط، موافقات، audit)</td><td><span class="src s-prd">PRD</span></td></tr>
+            <tr><td>تنظيم الكود</td><td>Bounded Contexts كـ Django apps + <strong>Hexagonal على الحواف</strong> + service layer (MVCS)</td><td><span class="src s-ours">اتفاقنا</span></td></tr>
+            <tr><td>Frontend</td><td>React (map-first، chat كطبقة تنقّل، artifacts عند الحاجة)</td><td><span class="src s-prd">PRD</span></td></tr>
+            <tr><td>AI Runtime</td><td><strong>Flue</strong> (خدمة TS مستقلة، خلف <code>AIAgentPort</code>)</td><td><span class="src s-ours">اتفاقنا</span></td></tr>
+            <tr><td>AI Router</td><td><strong>LiteLLM</strong> (proxy محايد للّغة + حدود تكلفة لكل عميل)</td><td><span class="src s-ours">اتفاقنا</span></td></tr>
+            <tr><td>المعرفة / RAG</td><td><strong>هجين:</strong> Surya OCR + vector RAG (غير منظّم) + OKF/MD (منسّق) خلف <code>KnowledgePort</code></td><td><span class="src s-hy">دمج</span></td></tr>
+            <tr><td>التنبّؤ</td><td><strong>TimesFM</strong> — worker تنبؤ زمني يقرأ من TimescaleDB</td><td><span class="src s-new">جديد</span></td></tr>
+            <tr><td>الأمان</td><td>Django RBAC + Permission Gateway + <strong>ClawPatrol</strong> + audit + موافقات بشرية</td><td><span class="src s-prd">PRD</span></td></tr>
+            <tr><td>قواعد البيانات</td><td>PostgreSQL (أعمال) + <strong>TimescaleDB</strong> (مواقع/تيليمتري) + vector DB (RAG) + Redis (cache)</td><td><span class="src s-hy">دمج</span></td></tr>
+            <tr><td>الأحداث</td><td>Redis Streams (بداية) → Kafka (عند الحجم)</td><td><span class="src s-ours">اتفاقنا</span></td></tr>
+            <tr><td>التحليلات / المسار</td><td>Polars + VROOM (لاحقًا City2Graph، Map3D)</td><td><span class="src s-prd">PRD</span></td></tr>
+            <tr><td>الإطلاق / DR</td><td>GrowthBook feature flags + Databasus/WAL backups</td><td><span class="src s-prd">PRD</span></td></tr>
+            <tr><td>نموذج العملاء</td><td>قاعدة واحدة + عزل row-level بـ <code>owner_id</code> + شجرة <code>manager_id</code> + خطط (مثل GPSWOX)</td><td><span class="src s-prd">PRD</span></td></tr>
+            <tr><td>سير التطوير</td><td>Spec Kitty (spec-driven) + opensrc (تعدين خبرة GPSWOX)</td><td><span class="src s-ours">اتفاقنا</span></td></tr>
+            <tr><td>التوسّع</td><td>يبقى Modular Django؛ تُستخرج خدمات (FastAPI/Go للـ ingestion) فقط عند أعراض scale فعلية</td><td><span class="src s-hy">دمج</span></td></tr>
+        </tbody>
+    </table></div>
+
+    <hr class="divider">
+
+    <!-- ========== 2. CUSTOMER MODEL ========== -->
+    <h2>② نموذج العملاء (مثل GPSWOX)</h2>
+    <p>قاعدة بيانات واحدة مشتركة، والعزل بالملكية لا بقاعدة منفصلة — مع شجرة موزّعين وخطط لكل حساب. مستخلص من كود GPSWOX الفعلي (<code>User.manager_id</code>، <code>billing_plan_id</code>، <code>user_device_pivot</code>).</p>
+    <pre><code>Super Admin                         <span class="comment"># يرى الكل</span>
+   └─ Reseller / Manager            <span class="comment"># manager_id — يدير عملاءه</span>
+        └─ Customer (Account)       <span class="comment"># owner_id — يملك الأجهزة والبيانات</span>
+             ├─ billing_plan        <span class="comment"># خطة SaaS + devices_limit + subscription</span>
+             └─ Sub-user (Client)   <span class="comment"># وصول مقيّد/مشاهدة</span></code></pre>
+    <div class="table-wrap"><table>
+        <thead><tr><th>المفهوم</th><th>الآلية</th><th>مصدره في GPSWOX</th></tr></thead>
+        <tbody>
+            <tr><td>عزل البيانات</td><td>كل سجل يحمل <code>owner_id</code>؛ global scope يفرض الفلترة على كل استعلام</td><td><code>user_device_pivot.user_id</code></td></tr>
+            <tr><td>هرمية الموزّعين</td><td>حساب يرجع لنفسه عبر <code>manager_id</code> (شجرة)</td><td><code>User.manager()</code></td></tr>
+            <tr><td>الخطط والحدود</td><td>خطة SaaS لكل حساب: حد الأجهزة، انتهاء الاشتراك</td><td><code>billing_plan_id</code>, <code>devices_limit</code>, <code>subscription_expiration</code></td></tr>
+            <tr><td>الحسابات الفرعية</td><td>Client تابع لحساب، بصلاحيات مقيّدة</td><td><code>Client → user()</code></td></tr>
+        </tbody>
+    </table></div>
+    <div class="note blue"><strong>تمييز مهم:</strong> «الخطط» هنا = <strong>خطط اشتراك SaaS</strong> (حدود أجهزة، تجديد) — وليست فوترة إيجار المركبات التي حذفناها. ثلاث طبقات وصول: مشرف → موزّع → عميل (+ مستخدم فرعي).</div>
+
+    <hr class="divider">
+
+    <!-- ========== 3. BOUNDED CONTEXTS ========== -->
+    <h2>③ الـ Bounded Contexts</h2>
+    <div class="table-wrap"><table>
+        <thead><tr><th>Context</th><th>المسؤولية</th><th>كيانات أساسية</th></tr></thead>
+        <tbody>
+            <tr><td>Accounts, Hierarchy &amp; Plans</td><td>الحسابات، شجرة الموزّعين، الأدوار/الصلاحيات، خطط الاشتراك والحدود</td><td>Account(User), Client, Role, Permission, Plan</td></tr>
+            <tr><td>Tracking</td><td>استقبال المواقع والقياسات من Traccar وتخزينها</td><td>Device, Position, Sensor, Trip</td></tr>
+            <tr><td>Fleet</td><td>المركبات والسائقون والمجموعات</td><td>Vehicle, Driver, DeviceGroup</td></tr>
+            <tr><td>Geo</td><td>المناطق الجغرافية ونقاط الاهتمام والمسارات</td><td>Geofence, Poi, Route</td></tr>
+            <tr><td>Alerting</td><td>قواعد التنبيه، الأحداث، الإشعارات</td><td>AlertRule, Event, Notification</td></tr>
+            <tr><td>Reporting</td><td>التقارير والتحليلات وسجلّ التشغيل</td><td>Report, ReportLog</td></tr>
+            <tr><td>Knowledge</td><td>المستندات/الصور، OCR، RAG هجين، الذاكرة</td><td>Document, Chunk, KnowledgeItem</td></tr>
+            <tr><td>AI-Agent</td><td>الرؤى، كشف الشذوذ، التنبؤ، توليد التقارير</td><td>AgentTask, Insight, Anomaly, Forecast</td></tr>
+        </tbody>
+    </table></div>
+
+    <hr class="divider">
+
+    <!-- ========== 4. MVCS RECONCILIATION ========== -->
+    <h2>④ MVCS مع DDD + Clean + Hexagonal</h2>
+    <p>أنماط غير متنافسة — كل واحد يجيب على سؤال مختلف. MVCS ينظّم طبقة التسليم، والبقية تنظّم القلب.</p>
+    <pre><code>React (View)
+   <span class="arrow">→</span> Django URL/View      <span class="comment"># Controller (MVCS) — HTTP فقط، رفيع</span>
+      <span class="arrow">→</span> TrackingService    <span class="comment"># Service (MVCS) — ينسّق + يفرض owner_id scope</span>
+         <span class="arrow">→</span> UseCase         <span class="comment"># Application (Clean) — Command/Query</span>
+            <span class="arrow">→</span> Entity       <span class="comment"># Domain/Model (DDD) — قواعد العمل</span>
+            <span class="arrow">→</span> Port         <span class="comment"># Hexagonal — interface (Traccar/LLM/Forecast)</span>
+               <span class="arrow">→</span> Adapter   <span class="comment"># Infrastructure — التنفيذ الفعلي</span></code></pre>
+
+    <hr class="divider">
+
+    <!-- ========== 5. AI LAYER ========== -->
+    <h2>⑤ طبقة الذكاء</h2>
+    <div class="tools-grid">
+        <div class="tool-card"><h4>🤖 Flue — AI Runtime</h4><p>خدمة TS مستقلة تنسّق الـ agents (sessions/tools/skills/sandbox/durability). يكلّمها Django عبر <code>AIAgentPort</code>.</p></div>
+        <div class="tool-card"><h4>🔀 LiteLLM — Router</h4><p>proxy موحّد محايد للّغة: GPT/Gemini/Claude + fallback + تتبّع تكلفة + حدود لكل عميل.</p></div>
+        <div class="tool-card"><h4>🧠 المعرفة الهجينة</h4><p>Surya OCR + vector RAG للملفات غير المنظّمة (PDF/صور) + OKF/MD للمعرفة المنسّقة، خلف <code>KnowledgePort</code>.</p></div>
+        <div class="tool-card"><h4>📈 TimesFM — التنبّؤ</h4><p>تنبؤ بالصيانة/الوقود/الـ ETA/الاستخدام من TimescaleDB، يغذّي الـ agents.</p></div>
+        <div class="tool-card"><h4>🛡 ClawPatrol — الأمان</h4><p>جدار أفعال وقت التشغيل: يوقف الأفعال الخطرة، يرسلها لموافقة بشرية، يسجّل كل شيء.</p></div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ========== 6. FOLDER STRUCTURE ========== -->
+    <h2>⑥ بنية المجلدات (Django Modular Monolith)</h2>
+    <pre><code>platform/
+├── <span class="path">apps/</span>                      <span class="comment"># Bounded Contexts كـ Django apps</span>
+│   ├── <span class="keyword">accounts/</span>             <span class="comment"># Account(User), Client, manager tree, Plans, RBAC</span>
+│   ├── <span class="keyword">tracking/</span>             <span class="comment"># Device, Position, Trip, Sensor + TraccarPort</span>
+│   ├── <span class="keyword">fleet/</span>                <span class="comment"># Vehicle, Driver, Group</span>
+│   ├── <span class="keyword">geo/</span>                  <span class="comment"># Geofence, Poi, Route</span>
+│   ├── <span class="keyword">alerting/</span>             <span class="comment"># AlertRule, Event, Notification</span>
+│   ├── <span class="keyword">reporting/</span>            <span class="comment"># Report, ReportLog (CQRS read models)</span>
+│   ├── <span class="keyword">knowledge/</span>            <span class="comment"># SuryaAdapter, VectorAdapter, OKFAdapter</span>
+│   └── <span class="keyword">ai_agent/</span>             <span class="comment"># AIAgentPort, LLMPort, ForecastPort + UseCases</span>
+│       └── (كل app: domain/ application/ services/ infrastructure/)
+│
+├── <span class="path">shared/</span>
+│   ├── events/                 <span class="comment"># Domain Events (Redis Streams)</span>
+│   └── kernel/                 <span class="comment"># OwnerId, DeviceId, GeoPoint + owner scope</span>
+│
+├── <span class="path">ai-layer/</span>  (TypeScript)     <span class="comment"># خدمة Flue المستقلة</span>
+│   ├── flue/                   <span class="comment"># fuel_investigator, maintenance_watcher, ...</span>
+│   └── knowledge/              <span class="comment"># OKF + Markdown (معرفة منسّقة)</span>
+│
+├── <span class="path">forecasting/</span> (Python)       <span class="comment"># TimesFM worker</span>
+│
+└── <span class="path">infra/</span>
+    ├── traccar/  postgres/  timescaledb/  redis/  vectordb/  litellm/</code></pre>
+
+    <h3>مثال تدفّق: موقع → تنبيه/تنبؤ → رؤية AI آمنة</h3>
+    <pre><code>[Traccar Webhook] <span class="arrow">→</span> TraccarAdapter <span class="arrow">→</span> IngestPositionUseCase <span class="arrow">→</span> Position (TimescaleDB)
+                                                      ↓
+                                          PositionReceived (event)
+                          ┌───────────────────────────┼───────────────────────────┐
+                          ↓                           ↓                           ↓
+                  [Geo: geofence]          [Alerting: rules]          [AI-Agent عبر AIAgentPort]
+                                                                                ↓
+                                                                   ai-layer (Flue) ينسّق:
+                                                                   • KnowledgePort (Surya+RAG / OKF)
+                                                                   • ForecastPort (TimesFM)
+                                                                   • LLMPort (LiteLLM)
+                                                                                ↓
+                                                                   Insight + إجراء مقترح
+                                                                                ↓
+                                                                   ClawPatrol + موافقة <span class="arrow">→</span> تنفيذ <span class="arrow">→</span> audit</code></pre>
+
+    <hr class="divider">
+
+    <!-- ========== 7. SCALE ========== -->
+    <h2>⑦ التوسّع (براغماتي)</h2>
+    <p>ابقَ على Modular Django. فكّ خدمة مستقلة فقط عند ظهور عَرَض فعلي:</p>
+    <div class="table-wrap"><table>
+        <thead><tr><th>العَرَض</th><th>الإجراء</th></tr></thead>
+        <tbody>
+            <tr><td>ضغط ingestion يخنق الباقي</td><td>استخرج <code>tracking-svc</code> (FastAPI/Go) + Kafka</td></tr>
+            <tr><td>تقارير ثقيلة تبطّئ الكتابة</td><td>CQRS Read Models / projections منفصلة</td></tr>
+            <tr><td>تضارب deployments بين فِرق</td><td>فكّ السياق المعني إلى خدمة مستقلة</td></tr>
+            <tr><td>حِمل AI/تنبؤ عالٍ</td><td>توسعة أفقية لـ ai-layer و forecasting workers</td></tr>
+        </tbody>
+    </table></div>
+    <div class="note">لا microservices كاملة، ولا Istio، ولا Event Sourcing مبكرًا — تُضاف فقط عند الحاجة الفعلية. TimescaleDB وناقل الأحداث وLiteLLM جاهزة من البداية لأنها رخيصة وتدفع لاحقًا.</div>
+
+    <hr class="divider">
+
+    <!-- ========== 8. DEV WORKFLOW ========== -->
+    <h2>⑧ سير التطوير</h2>
+    <div class="tools-grid">
+        <div class="tool-card"><h4>🐱 Spec Kitty</h4><p>Spec-Driven Development: القرارات أعلاه تُثبَّت في الـ constitution، ثم <code>spec→plan→tasks→implement→review→merge</code>.</p></div>
+        <div class="tool-card"><h4>📦 opensrc</h4><p><code>opensrc path github:djmomen/legacy-code-gpswox</code> لتعدين خبرة GPSWOX: الخطط، الـ alerts، الـ sensors، البروتوكولات، التقارير — وإعادة بنائها نظيفة في Django.</p></div>
+    </div>
+
+</div>
+</body>
+</html>

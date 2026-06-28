@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>PutPath — السجل والتتبّع</title><link rel="stylesheet" href="assets/app.css"></head>
+<body data-page="history.html">
+<div class="app"><aside class="side" id="side"></aside><div class="main"><header class="topbar" id="top"></header><main class="view"><div class="pad">
+<h2 class="page">السجل والتتبّع</h2><p class="sub">إعادة تشغيل المسار وفحص بيانات AVL — KSP-1023 · أمس</p>
+<div class="card" style="margin-bottom:14px;padding:0;overflow:hidden">
+  <svg viewBox="0 0 800 280" style="width:100%;background:#11151f">
+    <g stroke="#222838" stroke-width="2"><path d="M0,140 H800 M200,0 V280 M500,0 V280"/></g>
+    <polyline points="40,220 160,180 300,120 420,90 560,150 700,80 760,110" fill="none" stroke="var(--accent)" stroke-width="3"/>
+    <circle cx="300" cy="120" r="6" fill="var(--yellow)"/><text x="306" y="112" class="mk-label" fill="var(--yellow)">توقّف ٢٥د</text>
+    <circle cx="560" cy="150" r="6" fill="var(--red)"/><text x="540" y="170" class="mk-label" fill="var(--red)">هبوط وقود</text>
+  </svg>
+  <div style="padding:10px;display:flex;gap:8px;align-items:center"><button class="btn sm">▶ تشغيل</button><input type="range" style="flex:1" value="40"><span class="muted small">٠٢:١٤ ص</span></div>
+</div>
+<div class="card"><h3>جدول AVL</h3><table>
+  <tr><th>الوقت</th><th>السرعة</th><th>الإشعال</th><th>الوقود</th><th>الحدث</th></tr>
+  <tr><td>٠٢:٠٠</td><td>٠</td><td>OFF</td><td>٢١٠ ل</td><td>توقّف</td></tr>
+  <tr><td>٠٢:١٤</td><td>٠</td><td>OFF</td><td>١٦٥ ل</td><td><span class="pill p-red">هبوط ٤٥ ل</span></td></tr>
+  <tr><td>٠٢:٤٠</td><td>٣٢</td><td>ON</td><td>١٦٥ ل</td><td>تحرّك</td></tr>
+</table></div>
+</div></main></div></div><script src="assets/app.js"></script></body></html>

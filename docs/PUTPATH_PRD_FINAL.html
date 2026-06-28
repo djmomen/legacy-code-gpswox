@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PutPath — Final PRD (Detailed)</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", Tahoma, sans-serif; background: rgb(15,17,23); color: rgb(226,232,240); line-height: 1.75; padding: 20px; }
+.container { max-width: 1080px; margin: 0 auto; padding: 20px; }
+h1 { text-align: center; font-size: 2rem; background: linear-gradient(135deg, rgb(102,126,234), rgb(118,75,162)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
+.subtitle { text-align: center; color: rgb(148,163,184); font-size: 0.92rem; margin-bottom: 4px; }
+.stack-line { text-align: center; color: rgb(96,165,250); font-size: 0.78rem; font-family: monospace; margin-bottom: 26px; }
+h2 { font-size: 1.32rem; color: rgb(167,139,250); border-left: 4px solid rgb(124,58,237); padding-left: 12px; margin: 40px 0 14px; }
+h3 { font-size: 1.02rem; color: rgb(196,181,253); margin: 22px 0 8px; }
+p { color: rgb(203,213,225); margin-bottom: 11px; font-size: 0.92rem; }
+.lead { color: rgb(167,139,250); font-style: italic; border-left: 3px solid rgb(52,211,153); padding-left: 12px; margin: 12px 0; }
+.table-wrap { overflow-x: auto; margin: 12px 0 22px; border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.83rem; background: rgb(30,34,53); border-radius: 10px; overflow: hidden; }
+thead tr { background: linear-gradient(135deg, rgb(76,29,149), rgb(109,40,217)); }
+thead th { padding: 10px 13px; text-align: left; color: #fff; font-weight: 600; }
+tbody tr { border-bottom: 1px solid rgb(45,52,82); }
+tbody tr:hover { background: rgb(37,42,61); }
+tbody td { padding: 9px 13px; color: rgb(203,213,225); vertical-align: top; }
+tbody td:first-child { color: rgb(167,139,250); font-weight: 600; }
+pre { background: rgb(26,29,46); border: 1px solid rgb(45,52,82); border-radius: 10px; padding: 16px; overflow-x: auto; margin: 12px 0 22px; font-size: 0.78rem; line-height: 1.6; }
+code { color: rgb(167,139,250); font-family: monospace; font-size:0.88em; }
+pre code { color: rgb(226,232,240); }
+.comment { color: rgb(107,114,128); } .arrow { color: rgb(52,211,153); } .kw { color: rgb(244,114,182); } .path { color: rgb(96,165,250); }
+.divider { border: 0; border-top: 1px solid rgb(45,52,82); margin: 32px 0; }
+.note { background: rgb(26,29,46); border-left: 4px solid rgb(52,211,153); border-radius: 8px; padding: 12px 15px; margin: 12px 0 18px; font-size: 0.87rem; }
+.note strong { color: rgb(52,211,153); }
+ul { margin: 4px 0 14px 22px; } li { color: rgb(203,213,225); font-size:0.88rem; margin:3px 0; }
+.toc { background:rgb(26,29,46); border:1px solid rgb(45,52,82); border-radius:10px; padding:14px 20px; margin-bottom:26px; columns:2; font-size:0.85rem; }
+.toc a { color:rgb(167,139,250); text-decoration:none; } .toc a:hover{ text-decoration:underline; }
+.pills span { display:inline-block; background:rgb(30,34,53); border:1px solid rgb(45,52,82); border-radius:14px; padding:2px 9px; margin:2px; font-size:0.74rem; color:rgb(203,213,225); font-family:monospace; }
+</style>
+</head>
+<body>
+<div class="container">
+
+    <h1>PutPath — Final PRD</h1>
+    <p class="subtitle">Agentic Fleet Operating System &amp; AI Operations Workforce Platform · for fleet &amp; logistics customers</p>
+    <p class="stack-line">Traccar · Django · React · Flue · LiteLLM · Surya+RAG+OKF/MD · TimesFM · TimescaleDB · ClawPatrol · Polars · VROOM · GrowthBook</p>
+
+    <div class="toc">
+        <a href="#s1">1. Overview</a><br>
+        <a href="#s2">2. Customers &amp; Users</a><br>
+        <a href="#s3">3. Principles</a><br>
+        <a href="#s4">4. Final Technology Stack</a><br>
+        <a href="#s5">5. System Architecture</a><br>
+        <a href="#s6">6. Customer Model (GPSWOX-style)</a><br>
+        <a href="#s7">7. Bounded Contexts</a><br>
+        <a href="#s8">8. Domain Knowledge from GPSWOX</a><br>
+        <a href="#s9">9. AI Layer &amp; Coworkers</a><br>
+        <a href="#s10">10. Data Model</a><br>
+        <a href="#s11">11. Security &amp; Auth</a><br>
+        <a href="#s12">12. Knowledge / RAG</a><br>
+        <a href="#s13">13. Data Hub &amp; Mini Apps</a><br>
+        <a href="#s14">14. Navigation</a><br>
+        <a href="#s15">15. Approval &amp; Safety</a><br>
+        <a href="#s16">16. ENV Plan</a><br>
+        <a href="#s17">17. Scale Strategy</a><br>
+        <a href="#s18">18. Dev Workflow</a><br>
+        <a href="#s19">19. Roadmap</a><br>
+        <a href="#s20">20. Metrics / Risks / Principle</a>
+    </div>
+
+    <h2 id="s1">1. Overview</h2>
+    <p>PutPath is an <strong>Agentic Fleet Operating System</strong> and <strong>AI Operations Workforce Platform</strong> for telematics, logistics, fleet, construction, and heavy-equipment companies. A <strong>multi-customer SaaS</strong> (GPSWOX-style account model) — not a framework, not a single-customer deployment.</p>
+    <p class="lead">PutPath is the AI operating layer that turns fleet data, documents, alerts, and workflows into assigned work, investigations, reports, approvals, and operational decisions.</p>
+    <p>It is NOT a GPS dashboard, reporting tool, chatbot, or Traccar wrapper. <strong>Operational Intelligence Loop</strong> (beyond <code>alert→report→dashboard</code>):</p>
+    <pre><code>detect <span class="arrow">→</span> investigate <span class="arrow">→</span> explain <span class="arrow">→</span> assign <span class="arrow">→</span> approve <span class="arrow">→</span> execute <span class="arrow">→</span> follow up <span class="arrow">→</span> learn</code></pre>
+
+    <h2 id="s2">2. Target Customers &amp; Users</h2>
+    <p><strong>Customers:</strong> logistics, heavy-equipment rental, construction fleets, delivery, transportation, facility management, oil &amp; gas, municipal, field service, and telematics service providers (resellers) — incl. companies on Wialon/Traccar/GPSWOX/Teltonika.</p>
+    <p><strong>Users:</strong> Owner, Fleet Manager, Operations Manager, Dispatcher, Technical Support, Maintenance Manager, Fuel Analyst, Admin, Client Success, Reseller (manager), External Client (sub-user).</p>
+
+    <h2 id="s3">3. Product Principles</h2>
+    <ul>
+        <li>Map-first home; chat is core navigation; artifacts only when needed.</li>
+        <li>Action over visualization — what / why / who / next / approval / follow-up.</li>
+        <li>Backend (Django) is the source of truth.</li>
+        <li>No prompt-only security — RBAC, scoped tokens, allowlists, gateway, ClawPatrol, audit, approvals.</li>
+        <li>AI explains serious decisions (intent, tools, evidence, confidence, risk, approval, next, owner).</li>
+        <li>Strict customer isolation — zero cross-customer access.</li>
+        <li>Mine GPSWOX for knowledge, not code; keep Traccar as device engine.</li>
+    </ul>
+
+    <h2 id="s4">4. Final Technology Stack</h2>
+    <div class="table-wrap"><table>
+        <thead><tr><th>Layer</th><th>Decision</th><th>Notes</th></tr></thead>
+        <tbody>
+            <tr><td>Device engine</td><td>Traccar (clean fork)</td><td>44+ protocols; via API/WS/Forwarding behind <code>TraccarPort</code></td></tr>
+            <tr><td>Backend</td><td>Python Django + DRF</td><td>Source of truth: RBAC, plans, approvals, audit</td></tr>
+            <tr><td>Code org</td><td>Bounded Contexts as Django apps + Hexagonal edges + service layer (MVCS)</td><td>Clean dependency direction, Django-idiomatic</td></tr>
+            <tr><td>Frontend</td><td>React</td><td>Map-first, chat nav, artifacts</td></tr>
+            <tr><td>AI runtime</td><td>Flue (TS, isolated service)</td><td>sessions/tools/skills/sandbox/durability via <code>AIAgentPort</code></td></tr>
+            <tr><td>AI router</td><td>LiteLLM</td><td>Unified proxy, fallback, per-customer cost limits</td></tr>
+            <tr><td>Knowledge/RAG</td><td>Hybrid: Surya OCR + vector RAG + OKF/MD</td><td>behind <code>KnowledgePort</code>; vector DB swappable</td></tr>
+            <tr><td>Forecasting</td><td>TimesFM</td><td>reads TimescaleDB → maintenance/fuel/ETA/utilization</td></tr>
+            <tr><td>Safety</td><td>RBAC + Permission Gateway + ClawPatrol + audit + approvals</td><td>runtime action firewall</td></tr>
+            <tr><td>Databases</td><td>PostgreSQL + TimescaleDB + vector DB + Redis</td><td>PostGIS for geo</td></tr>
+            <tr><td>Events</td><td>Redis Streams → Kafka (at scale)</td><td>agentic event loop</td></tr>
+            <tr><td>Analytics/routing</td><td>Polars + VROOM (later City2Graph, Map3D)</td><td></td></tr>
+            <tr><td>Release/DR</td><td>GrowthBook + Databasus/WAL</td><td></td></tr>
+            <tr><td>Customer model</td><td>Shared DB + owner_id + manager_id tree + plans</td><td>GPSWOX-style</td></tr>
+            <tr><td>Dev workflow</td><td>Spec Kitty + opensrc</td><td>decisions in constitution</td></tr>
+        </tbody>
+    </table></div>
+    <p class="lead">Traccar tracks · Django controls · Flue acts · LiteLLM routes · Surya+RAG+OKF understand · TimesFM forecasts · Polars analyzes · VROOM optimizes · ClawPatrol protects · React presents.</p>
+
+    <h2 id="s5">5. System Architecture</h2>
+    <pre><code>Devices (GPS) ──protocol ports──▶ <span class="kw">Traccar</span> ──▶ Redis (live) + telemetry
+                                       │  Forwarding / WS / REST
+                                       ▼
+React ─▶ <span class="kw">Django</span> (DRF)
+   apps: accounts · tracking · fleet · geo · alerting · reporting · knowledge · ai_agent
+        │ Domain Events (Redis Streams)
+        ├─▶ <span class="kw">ai-layer</span> (Flue/TS) ─▶ KnowledgePort (Surya+RAG / OKF/MD)
+        │                          ─▶ ForecastPort (TimesFM)
+        │                          ─▶ LLMPort (LiteLLM)
+        ├─▶ <span class="kw">ClawPatrol</span> ─▶ human approval
+        └─▶ audit log
+DBs: PostgreSQL · TimescaleDB · vectorDB · Redis    Workers: Polars · VROOM · TimesFM</code></pre>
+    <pre><code>platform/
+├── <span class="path">apps/</span> accounts/ tracking/ fleet/ geo/ alerting/ reporting/ knowledge/ ai_agent/
+│        (each: domain/ application/ services/ infrastructure/)
+├── <span class="path">shared/</span> events/ (Redis Streams) · kernel/ (OwnerId, GeoPoint, owner scope)
+├── <span class="path">ai-layer/</span> (TS) flue/ · knowledge/ (OKF+MD)
+├── <span class="path">forecasting/</span> (Python) TimesFM worker
+└── <span class="path">infra/</span> traccar/ postgres/ timescaledb/ redis/ vectordb/ litellm/</code></pre>
+
+    <h2 id="s6">6. Customer Model (GPSWOX-style)</h2>
+    <pre><code>Super Admin                    <span class="comment"># sees all</span>
+   └─ Reseller / Manager       <span class="comment"># manager_id — manages their customers</span>
+        └─ Customer (Account)  <span class="comment"># owner_id — owns devices/data</span>
+             ├─ billing_plan   <span class="comment"># SaaS plan + devices_limit + subscription</span>
+             └─ Sub-user (Client)</code></pre>
+    <div class="table-wrap"><table>
+        <thead><tr><th>Concept</th><th>Mechanism</th><th>GPSWOX source</th></tr></thead>
+        <tbody>
+            <tr><td>Data isolation</td><td>every record has <code>owner_id</code>; global scope filters all queries</td><td><code>user_device_pivot.user_id</code></td></tr>
+            <tr><td>Reseller hierarchy</td><td>self-referencing <code>manager_id</code> tree</td><td><code>User.manager()</code></td></tr>
+            <tr><td>Plans &amp; limits</td><td>per-account device limit, subscription expiry</td><td><code>billing_plan_id</code>, <code>devices_limit</code></td></tr>
+            <tr><td>Sub-accounts</td><td>Client under account, restricted</td><td><code>Client → user()</code></td></tr>
+        </tbody>
+    </table></div>
+    <div class="note"><strong>Note:</strong> "plans" = SaaS subscription plans, NOT vehicle-rental billing (out of scope). Three tiers: admin → reseller → customer (+ sub-user).</div>
+
+    <h2 id="s7">7. Bounded Contexts</h2>
+    <div class="table-wrap"><table>
+        <thead><tr><th>Context</th><th>Responsibility</th><th>Entities</th></tr></thead>
+        <tbody>
+            <tr><td>Accounts, Hierarchy &amp; Plans</td><td>accounts, reseller tree, RBAC, plans/limits</td><td>Account, Client, Role, Permission, Plan</td></tr>
+            <tr><td>Tracking</td><td>ingest positions/telemetry from Traccar</td><td>Device, Position, Sensor, Trip</td></tr>
+            <tr><td>Fleet</td><td>vehicles, drivers, groups</td><td>Vehicle, Driver, DeviceGroup</td></tr>
+            <tr><td>Geo</td><td>geofences, POIs, routes</td><td>Geofence, Poi, Route</td></tr>
+            <tr><td>Alerting</td><td>rules, events, notifications</td><td>AlertRule, Event, Notification</td></tr>
+            <tr><td>Reporting</td><td>reports, analytics, logs</td><td>Report, ReportLog</td></tr>
+            <tr><td>Knowledge</td><td>docs/images, OCR, hybrid RAG, memory</td><td>Document, Chunk, KnowledgeItem</td></tr>
+            <tr><td>AI-Agent</td><td>insights, anomaly, forecast, reports</td><td>AgentTask, Insight, Anomaly, Forecast</td></tr>
+        </tbody>
+    </table></div>
+
+    <h2 id="s8">8. Domain Knowledge Mined from GPSWOX</h2>
+    <p>Rebuild clean in Python (mine via opensrc; do not port PHP).</p>
+    <h3>8.1 Traccar linkage</h3>
+    <p>Devices → protocol ports (<code>tracker_ports</code>) → Traccar decodes 44 protocols → positions + Redis live. <code>devices.traccar_device_id</code> → <code>traccar_devices</code> (key uniqueId = IMEI). Python: consume via REST(8082)+WS+Forwarding behind <code>TraccarPort</code>.</p>
+    <h3>8.2 Position storage</h3>
+    <p>GPSWOX shards across DBs (<code>DatabaseService</code>, <code>user_database_pivot</code>, table-per-device). Python: TimescaleDB hypertables (auto-partition/compression/retention), isolate by <code>owner_id</code>.</p>
+    <h3>8.3 Sensors (~35) — most valuable</h3>
+    <div class="pills"><span>Ignition</span><span>EngineHours</span><span>Odometer</span><span>FuelTank</span><span>FuelConsumption</span><span>Temperature</span><span>RFID</span><span>Seatbelt</span><span>Battery</span><span>Door</span><span>Satellites</span><span>GSM</span><span>VIN</span><span>Tachometer</span><span>SpeedECM</span><span>HarshAccel</span><span>HarshBraking</span><span>HarshTurning</span><span>Load</span><span>Counter</span><span>Logical</span><span>Numerical</span><span>Textual</span></div>
+    <p>Extraction logic = fuel-tank calibration, engine-hours from ACC, harsh thresholds. Python: <code>SensorExtractor</code> strategy per type, unit-tested.</p>
+    <h3>8.4 Reports (~100)</h3>
+    <p>Fuel (fillings/thefts/level/flow/tank-usage); drives/stops; geofences in/out; speed/overspeed/ECM; engine-hours/odometer; driver behavior (RAG/IVMS); general/travel-sheet/temperature; ops (offline/installation/sent-commands). Python: one Polars engine + ~10–15 core reports; rest on demand via Report Analyst.</p>
+    <h3>8.5 Alerts &amp; events</h3>
+    <p>Alert + conditions → Event/EventLog. Types: geofence, overspeed, fuel drain/fill, ignition, offline, harsh, sensor, SOS, low battery. Python: AlertRule + rule engine on <code>PositionReceived</code>.</p>
+    <h3>8.6 Commands (GPRS/SMS)</h3>
+    <p>CommandTemplate, SentCommand, CommandSchedule; via Traccar/TCP or SMS. Python: <code>TraccarPort.send_command()</code> gated by ClawPatrol + approval.</p>
+
+    <h2 id="s9">9. AI Layer &amp; Coworkers</h2>
+    <div class="table-wrap"><table>
+        <thead><tr><th>Component</th><th>Role</th></tr></thead>
+        <tbody>
+            <tr><td>Flue (TS)</td><td>AI runtime: orchestrates agents; via <code>AIAgentPort</code></td></tr>
+            <tr><td>LiteLLM</td><td>Model router: unified API, fallback, per-customer cost limits</td></tr>
+            <tr><td>Hybrid Knowledge</td><td>Surya+vector RAG (unstructured) + OKF/MD (curated) via <code>KnowledgePort</code></td></tr>
+            <tr><td>TimesFM</td><td>Forecasting worker: maintenance, fuel, ETA, utilization</td></tr>
+            <tr><td>ClawPatrol</td><td>Runtime firewall: block/pause risky actions, route to approval, log</td></tr>
+        </tbody>
+    </table></div>
+    <p><strong>Coworkers:</strong> Master/Router, Fuel Investigator, Device &amp; Offline, Report Analyst, Geofence, Driver, Maintenance Watcher, Dispatch (VROOM), Routine, Bottleneck Coach, Client Update, Knowledge, Data Hub, Data Entry/Admin.</p>
+    <p><strong>AI Output Standard:</strong> Summary · Intent · Evidence · Tools/data · Confidence · Risk · Next action · Approval · Owner · Audit status.</p>
+
+    <h2 id="s10">10. Data Model (core)</h2>
+    <pre><code>Account · Client · Role · Permission · Plan · Device · Vehicle · Driver · Group
+Geofence · Poi · Route · Position(TimescaleDB) · Trip · Sensor
+AlertRule · Event · Notification · Report · ReportLog · Command · SentCommand
+WorkRequest · Case · ApprovalRequest · Routine · MiniApp · AuditLog
+Document · Chunk · KnowledgeItem · Forecast · DataSource · Dataset · DataTable · Form
+Integration · NotificationChannel · FeatureFlag</code></pre>
+    <p><strong>Device fields (keep from GPSWOX):</strong> imei(unique), traccar_device_id, plate_number, vin, registration_number, device_model, sim_number, fuel_quantity/price/per_km, engine_hours mode, detect_engine, min_moving_speed, min_fuel_fillings/thefts, snap_to_road, icon_colors, expiration_date, parameters(JSON).</p>
+
+    <h2 id="s11">11. Security &amp; Auth</h2>
+    <div class="table-wrap"><table>
+        <thead><tr><th>Layer</th><th>GPSWOX → Python</th></tr></thead>
+        <tbody>
+            <tr><td>Authn</td><td>session(web) + JWT/OAuth2(api) + device backend</td></tr>
+            <tr><td>2FA</td><td>django-otp / pyotp (GPSWOX: google2fa)</td></tr>
+            <tr><td>Authz</td><td>RBAC module→{view,edit,remove}; DRF permissions + policies; plan gating in services</td></tr>
+            <tr><td>Hierarchy</td><td>reseller/customer/sub-user via scope</td></tr>
+            <tr><td>Carry over</td><td>ConfirmedAction→ClawPatrol; OneSessionPerUser; PermissionsHash; enforce owner_id in service layer</td></tr>
+        </tbody>
+    </table></div>
+
+    <h2 id="s12">12. Knowledge / RAG &amp; Document Intelligence</h2>
+    <p>Two truths: live operational (APIs/Traccar/DB) + knowledge/evidence (hybrid RAG). Unstructured (PDF/scan/screenshot/photo) → Surya OCR → chunk → embed → vector → grounded answer + citations. Curated (rules/specs/SOPs/exceptions) → OKF/MD navigated by agent. Both behind <code>KnowledgePort</code>; combine as GraphRAG. RAG types: Document, Image, Table, Case, Memory, Hybrid. Customer isolation + citations + logging mandatory.</p>
+
+    <h2 id="s13">13. Data Hub &amp; Mini Apps</h2>
+    <p><strong>Data Hub:</strong> connect → clean → structure → activate. Tables (manual/CSV/API/AI-filled/AI-analyzed), forms, surveys, quizzes, checklists, validation, sync jobs, automation triggers, agent access. Sources: telematics, business systems, comms, files.</p>
+    <p><strong>Mini Apps:</strong> built from tables/forms/docs/automations/agents (wizard/prompt/from-table/from-doc). Examples: Daily Inspection, Fuel Refill Verification, Technician Installation, Client Portal, Driver Quiz, Fuel Anomaly Board. Permissions incl. public-with-expiry + row-level; external publish needs approval.</p>
+
+    <h2 id="s14">14. Navigation</h2>
+    <p>Home · AI Coworkers · Work Requests · Collaboration · Projects · Bottlenecks · Reports · Routine Studio · Integrations &amp; Data Hub · Mini Apps · Alerts · History · Workers · Devices · Vehicles/Assets · Drivers · Fuel · Maintenance · Dispatch/Routing · Knowledge &amp; Data · Approvals · Audit Log · Channels · Logs · Insights · Settings.</p>
+    <div class="note"><strong>Distinction:</strong> Data Hub = connect/clean/structure · Knowledge &amp; Data = search/retrieve (RAG) · Mini Apps = build apps.</div>
+
+    <h2 id="s15">15. Approval &amp; Safety Model</h2>
+    <ul>
+        <li><strong>Auto-approved (read-only):</strong> searches, history, summaries, drafts, allowed reads.</li>
+        <li><strong>Confirmation:</strong> create geofence, send message, assign task, schedule automation, sensitive export, device settings, publish mini app, external share.</li>
+        <li><strong>High-risk (ClawPatrol):</strong> delete, remove worker, disable device, change permissions, mass update, bulk commands, billing/security, public publish.</li>
+        <li><strong>Flow:</strong> ask → prepare → RBAC → ClawPatrol → approval if risky → execute → audit.</li>
+    </ul>
+
+    <h2 id="s16">16. ENV &amp; Config Plan</h2>
+    <pre><code><span class="comment"># pydantic-settings, typed, validated at boot</span>
+App:        APP_ENV, APP_URL, SECRET_KEY
+Databases:  POSTGRES_URL, TIMESCALE_URL, VECTOR_DB_URL, REDIS_URL
+Traccar:    TRACCAR_API_URL, TRACCAR_WS_URL, TRACCAR_USER/PASS, TRACCAR_FORWARD_SECRET
+Auth:       JWT_SECRET, OAUTH_*, OTP_ISSUER
+AI layer:   FLUE_SERVICE_URL, LITELLM_URL, LITELLM_MASTER_KEY
+Knowledge:  SURYA_*, OKF_KNOWLEDGE_PATH, TIMESFM_MODEL
+Channels:   SMS_PROVIDER, FCM_KEY, WHATSAPP_*, MAPS_KEY
+Platform:   GROWTHBOOK_KEY, SENTRY_DSN, STORAGE_* (S3)</code></pre>
+
+    <h2 id="s17">17. Scale Strategy (pragmatic)</h2>
+    <div class="table-wrap"><table>
+        <thead><tr><th>Symptom</th><th>Action</th></tr></thead>
+        <tbody>
+            <tr><td>Ingestion chokes the rest</td><td>extract tracking-svc (FastAPI/Go) + Kafka</td></tr>
+            <tr><td>Heavy reports slow writes</td><td>CQRS read models / projections</td></tr>
+            <tr><td>Team deployment conflicts</td><td>split the affected context</td></tr>
+            <tr><td>High AI/forecast load</td><td>scale ai-layer &amp; forecasting workers</td></tr>
+        </tbody>
+    </table></div>
+    <div class="note">No premature microservices/Istio/Event-Sourcing. TimescaleDB, event bus, LiteLLM in from day one.</div>
+
+    <h2 id="s18">18. Dev Workflow</h2>
+    <p><strong>Spec Kitty</strong> (spec-driven): lock decisions in constitution → <code>spec→plan→tasks→next→review→accept→merge</code>. <strong>opensrc</strong>: mine GPSWOX (<code>opensrc path github:djmomen/legacy-code-gpswox</code>); save mined knowledge as OKF/MD in <code>ai-layer/knowledge/</code> (serves build-time specs + run-time RAG).</p>
+
+    <h2 id="s19">19. Roadmap</h2>
+    <ol style="margin-left:22px; color:rgb(203,213,225); font-size:0.9rem;">
+        <li>Core Fleet OS (Traccar, Django, React, accounts/plans, devices/vehicles/drivers, geofences, trips, alerts, basic reports, audit)</li>
+        <li>Operations Workflow (work requests, cases, approvals, projects, bottlenecks, collaboration)</li>
+        <li>Agentic Layer (Flue agents, LiteLLM, tool audit)</li>
+        <li>Knowledge &amp; Document Intelligence (Surya, hybrid RAG, OKF/MD, citations)</li>
+        <li>Forecasting (TimesFM)</li>
+        <li>Integrations &amp; Data Hub</li>
+        <li>Mini Apps</li>
+        <li>Safety &amp; Governance (ClawPatrol, gateway, audit hardening)</li>
+        <li>Advanced Intelligence &amp; Maturity (Polars/VROOM, City2Graph, Map3D, GrowthBook, DR)</li>
+    </ol>
+
+    <h2 id="s20">20. Metrics · Risks · Final Principle</h2>
+    <p><strong>Metrics:</strong> time-to-asset/report, AI actions completed, approval completion, suggestion acceptance, doc-search success; reduced reporting time/unresolved alerts/offline/fuel anomalies/overdue maintenance; MRR, churn, adoption; safety: cross-customer incidents = zero, unauthorized retrieval = zero.</p>
+    <p><strong>Top risks:</strong> scope breadth (prioritize the loop), AI trust (evidence+confidence+citations), messy data (connectors+mapping+CSV), dangerous automation (ClawPatrol+approvals+audit), Flue language split (isolated service + LiteLLM HTTP bridge).</p>
+    <p class="lead">Power + safety + domain focus + customer isolation + manager control + auditability. PutPath turns live telematics data, documents, tables, forms, workflows, and AI coworkers into safe, accountable, automated fleet operations — built on Traccar, rebuilt clean in Python, powered by Flue + LiteLLM + hybrid knowledge + TimesFM.</p>
+
+</div>
+</body>
+</html>

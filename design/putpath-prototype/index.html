@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>PutPath — الرئيسية</title><link rel="stylesheet" href="assets/app.css"></head>
+<body data-page="index.html">
+<div class="app"><aside class="side" id="side"></aside><div class="main"><header class="topbar" id="top"></header><main class="view">
+<div class="home">
+  <div class="veh-panel">
+    <div class="hd"><span>المركبات (١٢٤)</span><span class="muted" style="font-weight:400">حيّ</span></div>
+    <div class="veh"><span class="dot" style="background:var(--green)"></span><div><div class="nm">KSP-1023 · ناقلة وقود</div><div class="meta">أحمد العتيبي · ٦٤ كم/س · الرياض</div></div></div>
+    <div class="veh"><span class="dot" style="background:var(--yellow)"></span><div><div class="nm">KSP-3390 · شاحنة</div><div class="meta">سعد القحطاني · متوقف (محرّك يعمل) · ١٢د</div></div></div>
+    <div class="veh"><span class="dot" style="background:var(--red)"></span><div><div class="nm">ALB-2210 · حفّار</div><div class="meta">غير متصل منذ ٣ ساعات · الدمام</div></div></div>
+    <div class="veh"><span class="dot" style="background:var(--green)"></span><div><div class="nm">DLV-118 · فان توصيل</div><div class="meta">فيصل الدوسري · ٤٢ كم/س · جدة</div></div></div>
+    <div class="veh"><span class="dot" style="background:var(--muted)"></span><div><div class="nm">KSP-0471 · شاحنة</div><div class="meta">متوقف · صيانة متأخرة ⚠</div></div></div>
+    <div class="veh"><span class="dot" style="background:var(--green)"></span><div><div class="nm">CON-552 · خلّاطة</div><div class="meta">ماجد الشهري · ٢٨ كم/س · موقع KSP</div></div></div>
+    <div class="veh"><span class="dot" style="background:var(--green)"></span><div><div class="nm">DLV-204 · فان</div><div class="meta">نواف · ٥٥ كم/س · جدة</div></div></div>
+  </div>
+  <div class="maparea">
+    <svg viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+      <rect width="800" height="600" fill="#11151f"/>
+      <g stroke="#222838" stroke-width="2" fill="none"><path d="M0,120 H800 M0,300 H800 M0,460 H800 M150,0 V600 M380,0 V600 M600,0 V600"/><path d="M0,40 C200,90 300,260 520,300 S720,520 800,560" stroke="#2a3142" stroke-width="3"/></g>
+      <circle cx="380" cy="300" r="70" fill="rgba(249,115,22,.08)" stroke="var(--accent)" stroke-dasharray="5 5"/><text x="380" y="300" text-anchor="middle" class="mk-label" fill="var(--accent2)">منطقة KSP</text>
+      <g><circle cx="300" cy="180" r="7" fill="var(--green)"/><text x="312" y="184" class="mk-label">KSP-1023</text></g>
+      <g><circle cx="520" cy="240" r="7" fill="var(--yellow)"/><text x="532" y="244" class="mk-label">KSP-3390</text></g>
+      <g><circle cx="180" cy="430" r="7" fill="var(--red)"/><text x="192" y="434" class="mk-label">ALB-2210</text></g>
+      <g><circle cx="640" cy="420" r="7" fill="var(--green)"/><text x="652" y="424" class="mk-label">DLV-118</text></g>
+      <g><circle cx="400" cy="320" r="7" fill="var(--green)"/><text x="412" y="324" class="mk-label">CON-552</text></g>
+      <polyline points="120,90 220,140 300,180" fill="none" stroke="var(--green)" stroke-width="2" stroke-dasharray="3 3"/>
+    </svg>
+    <div class="toolrail"><div class="tool" title="منطقة">▱</div><div class="tool" title="طبقات">⧉</div><div class="tool" title="قياس">📏</div><div class="tool" title="بحث موقع">⌖</div><div class="tool" title="مشاركة">↗</div></div>
+    <div class="alert-strip">
+      <div class="ah"><span>تنبيهات حيّة</span><span class="pill p-red">٤</span></div>
+      <a class="al" href="ai-coworkers.html" style="text-decoration:none;color:inherit"><span class="pill p-red">وقود</span><div>هبوط ٤٥ لتر — KSP-1023 <span class="muted">والمحرّك متوقف</span></div></a>
+      <a class="al" href="alerts.html" style="text-decoration:none;color:inherit"><span class="pill p-yellow">منطقة</span><div>خروج ALB-2210 من منطقة الدمام</div></a>
+      <a class="al" href="maintenance.html" style="text-decoration:none;color:inherit"><span class="pill p-orange">صيانة</span><div>KSP-0471 صيانة متأخرة ٧٢٠ كم</div></a>
+      <a class="al" href="devices.html" style="text-decoration:none;color:inherit"><span class="pill p-blue">offline</span><div>ALB-2210 غير متصل ٣ س</div></a>
+    </div>
+    <div class="chatbar"><span style="font-size:1.1rem">🤖</span><input placeholder="اسأل PutPath… مثال: حقّق في هبوط وقود KSP-1023" onkeydown="if(event.key==='Enter')location.href='ai-coworkers.html'"><button class="send" onclick="location.href='ai-coworkers.html'">↑</button></div>
+  </div>
+</div>
+</main></div></div><script src="assets/app.js"></script></body></html>

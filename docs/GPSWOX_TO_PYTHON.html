@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>خبرة GPSWOX → إعادة البناء بـ Python</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", Tahoma, sans-serif; background: rgb(15,17,23); color: rgb(226,232,240); line-height: 1.8; padding: 20px; }
+.container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+h1 { text-align: center; font-size: 1.9rem; background: linear-gradient(135deg, rgb(102,126,234), rgb(118,75,162)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
+.subtitle { text-align: center; color: rgb(148,163,184); font-size: 0.92rem; margin-bottom: 8px; }
+.note0 { text-align:center; color:rgb(52,211,153); font-size:0.8rem; margin-bottom:30px; }
+h2 { font-size: 1.32rem; color: rgb(124,58,237); border-right: 4px solid rgb(124,58,237); padding-right: 12px; margin: 42px 0 14px; }
+h3 { font-size: 1.04rem; color: rgb(167,139,250); margin: 22px 0 10px; }
+p { color: rgb(203,213,225); margin-bottom: 12px; font-size: 0.92rem; }
+.table-wrap { overflow-x: auto; margin: 12px 0 22px; border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.83rem; background: rgb(30,34,53); border-radius: 10px; overflow: hidden; }
+thead tr { background: linear-gradient(135deg, rgb(76,29,149), rgb(109,40,217)); }
+thead th { padding: 10px 13px; text-align: right; color: #fff; font-weight: 600; }
+tbody tr { border-bottom: 1px solid rgb(45,52,82); }
+tbody tr:hover { background: rgb(37,42,61); }
+tbody td { padding: 9px 13px; color: rgb(203,213,225); vertical-align: top; }
+tbody td:first-child { color: rgb(167,139,250); font-weight: 600; font-size: 0.81rem; }
+pre { background: rgb(26,29,46); border: 1px solid rgb(45,52,82); border-radius: 10px; padding: 16px; overflow-x: auto; margin: 12px 0 22px; font-size: 0.79rem; line-height: 1.65; direction: ltr; text-align: left; }
+code { color: rgb(167,139,250); font-family: monospace; font-size:0.86em; }
+pre code { color: rgb(226,232,240); }
+.comment { color: rgb(107,114,128); } .arrow { color: rgb(52,211,153); } .keyword { color: rgb(244,114,182); } .path { color: rgb(96,165,250); }
+.divider { border: 0; border-top: 1px solid rgb(45,52,82); margin: 34px 0; }
+.note { background: rgb(26,29,46); border-right: 4px solid rgb(52,211,153); border-radius: 8px; padding: 12px 15px; margin: 12px 0 20px; font-size: 0.87rem; }
+.note strong { color: rgb(52,211,153); }
+.note.warn { border-right-color: rgb(251,191,36); } .note.warn strong { color: rgb(251,191,36); }
+.note.tip { border-right-color: rgb(244,114,182); } .note.tip strong { color: rgb(244,114,182); }
+.tag { display:inline-block; font-size:0.68rem; padding:1px 7px; border-radius:10px; font-family:monospace; font-weight:700; }
+.keep { background:rgba(52,211,153,0.15); color:rgb(52,211,153); }
+.rebuild { background:rgba(96,165,250,0.15); color:rgb(96,165,250); }
+.drop { background:rgba(248,113,113,0.15); color:rgb(248,113,113); }
+.modern { background:rgba(251,191,36,0.14); color:rgb(251,191,36); }
+.pills span { display:inline-block; background:rgb(30,34,53); border:1px solid rgb(45,52,82); border-radius:14px; padding:3px 10px; margin:3px; font-size:0.76rem; color:rgb(203,213,225); font-family:monospace; }
+.toc { background:rgb(26,29,46); border:1px solid rgb(45,52,82); border-radius:10px; padding:14px 18px; margin-bottom:26px; columns:2; font-size:0.86rem; }
+.toc a { color:rgb(167,139,250); text-decoration:none; } .toc a:hover{ text-decoration:underline; }
+</style>
+</head>
+<body>
+<div class="container">
+
+    <h1>خبرة GPSWOX → إعادة البناء بـ Python</h1>
+    <p class="subtitle">دليل عملي لكل خدمات GPSWOX فوق Traccar: الربط، الـ schema، الأمان، الـ env — مع نصائح الترحيل</p>
+    <p class="note0">✔ كل ما يلي مُستخرَج من كود GPSWOX الفعلي في هذا المستودع (لا تخمين)</p>
+
+    <div class="toc">
+        <a href="#arch">① معمارية GPSWOX الفعلية</a><br>
+        <a href="#traccar">② ربط Traccar — كيف يعمل</a><br>
+        <a href="#shard">③ تقسيم قواعد بيانات المواقع</a><br>
+        <a href="#services">④ كتالوج الخدمات</a><br>
+        <a href="#sensors">⑤ المستشعرات والاستخلاص</a><br>
+        <a href="#reports">⑥ التقارير</a><br>
+        <a href="#alerts">⑦ التنبيهات والأحداث</a><br>
+        <a href="#commands">⑧ الأوامر (GPRS/SMS)</a><br>
+        <a href="#schema">⑨ نموذج البيانات / Schema</a><br>
+        <a href="#auth">⑩ الأمان والمصادقة</a><br>
+        <a href="#env">⑪ الـ ENV والإعدادات</a><br>
+        <a href="#tips">⑫ نصائح الترحيل PHP→Python</a>
+    </div>
+
+    <div class="note"><strong>القاعدة الذهبية:</strong> <span class="tag keep">أبقِ</span> Traccar كما هو (محرّك البروتوكولات = 44 بروتوكول جهاز، قيمة لا تُقدَّر). <span class="tag rebuild">أعِد بناء</span> طبقة الأعمال بـ Python/Django. <span class="tag drop">احذف</span> ما عفا عنه الزمن. <span class="tag modern">حدّث</span> ما يستحق. هذا التصنيف يظهر في كل جدول.</div>
+
+    <!-- 1. ARCH -->
+    <h2 id="arch">① معمارية GPSWOX الفعلية</h2>
+    <pre><code>الأجهزة (GPS) ──TCP/UDP على منافذ البروتوكولات──▶  <span class="keyword">Traccar</span> (Java)
+                                                      │  يفك البروتوكول (44 نوع)
+                                                      ▼
+                                       MySQL <span class="path">gpswox_traccar</span> + <span class="path">Redis</span> (لحظي)
+                                                      │
+                                       traccar_devices (آخر حالة) + traccar_positions (تاريخ — مُقسّم)
+                                                      ▼
+                            <span class="keyword">GPSWOX Web</span> (Laravel/PHP)  ──▶  MySQL <span class="path">gpswox_web</span> (الأعمال)
+                                                      │
+                                React/Blade + WebSockets ──▶ المستخدم</code></pre>
+    <div class="table-wrap"><table>
+        <thead><tr><th>المكوّن</th><th>الدور في GPSWOX</th><th>القرار للنسخة Python</th></tr></thead>
+        <tbody>
+            <tr><td>Traccar (Java)</td><td>خادم استقبال الأجهزة وفكّ 44 بروتوكولًا</td><td><span class="tag keep">أبقِ</span> fork نظيف، تكامل عبر API/DB/Redis</td></tr>
+            <tr><td>MySQL gpswox_traccar</td><td>قاعدة Traccar (أجهزة + مواقع)</td><td><span class="tag modern">حدّث</span> → TimescaleDB للمواقع</td></tr>
+            <tr><td>MySQL gpswox_web</td><td>قاعدة الأعمال (مستخدمون، أجهزة، تقارير…)</td><td><span class="tag modern">حدّث</span> → PostgreSQL</td></tr>
+            <tr><td>Redis</td><td>حالة لحظية + cache + sessions</td><td><span class="tag keep">أبقِ</span> Redis (+ Streams للأحداث)</td></tr>
+            <tr><td>Laravel (PHP)</td><td>كل منطق الأعمال</td><td><span class="tag rebuild">أعِد بناء</span> Django + DRF</td></tr>
+        </tbody>
+    </table></div>
+
+    <!-- 2. TRACCAR -->
+    <h2 id="traccar">② ربط Traccar — كيف يعمل فعليًا</h2>
+    <p>GPSWOX لا يكلّم الأجهزة مباشرة — Traccar يفعل. الربط عبر ٤ قنوات (من <code>config/tracker.php</code> و<code>traccar_devices</code>):</p>
+    <div class="table-wrap"><table>
+        <thead><tr><th>القناة</th><th>التفصيل (من الكود)</th></tr></thead>
+        <tbody>
+            <tr><td>الإعداد</td><td>GPSWOX يولّد إعداد Traccar: <code>web.port=8082</code> (API)، <code>database.url=jdbc:mysql…/gpswox_traccar</code>، <code>redis.enable=true</code>، <code>time.override=serverTime</code>، <code>registerUnknown=true</code> (يسجّل المجهول تلقائيًا)</td></tr>
+            <tr><td>المنافذ</td><td>جدول <code>tracker_ports</code> = أي بروتوكول على أي منفذ (port/name/parent)؛ كل نوع جهاز له منفذ</td></tr>
+            <tr><td>ربط الجهاز</td><td><code>devices.traccar_device_id</code> → صف في <code>traccar_devices</code> (المفتاح <code>uniqueId</code> = IMEI)؛ <code>traccar_devices</code> يحمل آخر حالة: lat/lng/speed/course/power/protocol/latest_positions</td></tr>
+            <tr><td>اللحظي</td><td>Traccar ينشر عبر Redis؛ GPSWOX يلتقط (PositionResultRetrievedListener) ويبثّ للواجهة</td></tr>
+        </tbody>
+    </table></div>
+    <h3>الربط في نسخة Python</h3>
+    <div class="note tip"><strong>نصيحة جوهرية:</strong> لا تقرأ جداول Traccar مباشرة (هشّ). استهلك Traccar عبر واجهاته الرسمية الثلاث، خلف <code>TraccarPort</code> واحد:
+        <br>• <strong>REST API</strong> (8082) للأجهزة/الأوامر/الإعداد.
+        <br>• <strong>WebSocket</strong> (<code>/api/socket</code>) للمواقع اللحظية.
+        <br>• <strong>Position Forwarding</strong> (Traccar يدفع كل موقع كـ JSON عبر webhook) → أبسط مسار ingestion.</div>
+    <pre><code><span class="comment"># tracking/infrastructure/traccar_adapter.py</span>
+class TraccarHttpAdapter(TraccarPort):       <span class="comment"># REST: devices, commands, geofences</span>
+class TraccarWsConsumer:                      <span class="comment"># WebSocket: live positions → Redis Streams</span>
+class TraccarForwardWebhook(View):           <span class="comment"># Traccar → POST /ingest → TimescaleDB + event</span></code></pre>
+
+    <!-- 3. SHARDING -->
+    <h2 id="shard">③ تقسيم قواعد بيانات المواقع (سرّ الـ scale)</h2>
+    <p>أهم درس scale في GPSWOX: المواقع لا تُخزَّن في قاعدة واحدة. من <code>DatabaseService</code>:</p>
+    <div class="table-wrap"><table>
+        <thead><tr><th>الآلية (من الكود)</th><th>الشرح</th></tr></thead>
+        <tbody>
+            <tr><td><code>Database</code> entity</td><td>كل صف = قاعدة مواقع مستقلة بإعداد اتصال خاص</td></tr>
+            <tr><td><code>database{id}</code> connections</td><td>تُحقن ديناميكيًا في إعداد الاتصالات وقت التشغيل</td></tr>
+            <tr><td><code>user_database_pivot</code></td><td>كل مستخدم يُسنَد لقاعدة مواقع (توزيع الحمل)</td></tr>
+            <tr><td>جدول لكل جهاز</td><td><code>traccar_positions_&lt;deviceId&gt;</code> (HasManyTable) — جدول منفصل لمواقع كل جهاز</td></tr>
+        </tbody>
+    </table></div>
+    <div class="note tip"><strong>نصيحة:</strong> هذا التقسيم اليدوي كان حلًّا لقصور MySQL مع السلاسل الزمنية. في Python <span class="tag modern">حدّث</span>: استخدم <strong>TimescaleDB</strong> (hypertables + partitioning تلقائي + ضغط + retention) — يحلّ نفس المشكلة بلا تعقيد التقسيم اليدوي. احتفظ بمفهوم «العزل بالعميل» عبر <code>owner_id</code> لا بقاعدة منفصلة.</div>
+
+    <!-- 4. SERVICES -->
+    <h2 id="services">④ كتالوج الخدمات (~60 خدمة)</h2>
+    <p>كل خدمة في <code>Tobuli/Services</code> = حالة استخدام مثبتة. مجمّعة حسب الـ Bounded Context:</p>
+    <div class="table-wrap"><table>
+        <thead><tr><th>السياق</th><th>خدمات GPSWOX</th></tr></thead>
+        <tbody>
+            <tr><td>Accounts</td><td>UserService, UserClientService, UserCompanyService, PermissionService, RegistrationFieldsService, UserSecondaryCredentialsService, AuthManager</td></tr>
+            <tr><td>Tracking</td><td>DeviceService, DeviceSensorsService, DeviceConfigService, DeviceConfigUpdateService, DeviceBeaconsService, DeviceImageService, DeviceModelCache, DeviceAnonymizerService, DeviceUsersService</td></tr>
+            <tr><td>Geo</td><td>GeofenceService, GeofenceGroupService, GeofenceUserService, PoiService, PoiGroupService, RouteService, RouteGroupService, SpeedLimitService, StreetviewService</td></tr>
+            <tr><td>Alerting</td><td>EventWriteService, NotificationService, AlertSoundService, ConditionService</td></tr>
+            <tr><td>Reporting</td><td>ReportManager, ScheduleService, FractalTransformerService</td></tr>
+            <tr><td>Commands</td><td>CommandService, SendCommandService (GPRS templates / SMS / protocol)</td></tr>
+            <tr><td>Field Ops</td><td>TaskService, TaskSetService, ChecklistService, DiemRateService</td></tr>
+            <tr><td>Integrations</td><td>ForwardService (دفع بيانات لطرف ثالث), FcmService (إشعارات), SystemSmsService, SimBlockingService, FtpUserService</td></tr>
+            <tr><td>Platform</td><td>DatabaseService (تقسيم), Cleaner, TranslationService, SharingService, TagService, CustomValuesService</td></tr>
+        </tbody>
+    </table></div>
+    <div class="note"><strong>الخلاصة:</strong> هذه القائمة هي <em>خارطة الميزات</em> لمنتجك. أعِد بناء كل سياق كـ Django app؛ ابدأ Phase 1 بـ Accounts + Tracking + Geo + Alerting، وأجّل Field Ops/Integrations.</div>
+
+    <!-- 5. SENSORS -->
+    <h2 id="sensors">⑤ المستشعرات والاستخلاص (~35 نوع)</h2>
+    <p>قلب الذكاء التيليماتي. كل نوع في <code>Tobuli/Sensors/Types</code> له منطق استخلاص (Extraction) من بيانات الجهاز الخام:</p>
+    <div class="pills">
+        <span>Ignition</span><span>Engine</span><span>EngineHours</span><span>Odometer</span><span>FuelTank</span><span>FuelConsumption</span><span>Temperature</span><span>RFID</span><span>Seatbelt</span><span>Battery</span><span>BatteryExternal</span><span>Door</span><span>Satellites</span><span>GSM</span><span>VIN</span><span>Tachometer</span><span>SpeedECM</span><span>Counter</span><span>Load</span><span>HarshAcceleration</span><span>HarshBreaking</span><span>HarshTurning</span><span>Blocked</span><span>Plugged</span><span>Acc</span><span>DriveBusiness</span><span>DrivePrivate</span><span>Logical</span><span>Numerical</span><span>Textual</span><span>Datetime</span>
+    </div>
+    <div class="note tip"><strong>نصيحة:</strong> منطق الاستخلاص (معايرة خزان الوقود بجداول tank calibration، حساب ساعات المحرك من ACC، كشف القيادة الحادة من العتبات) هو <strong>أثمن معرفة</strong> في GPSWOX. عدّنها بـ opensrc وأعد بناءها كـ <code>SensorExtractor</code> strategy في Python (نوع → دالة استخلاص). أنواع المستشعرات: منطقي/رقمي/نصّي + المتخصصة.</div>
+
+    <!-- 6. REPORTS -->
+    <h2 id="reports">⑥ التقارير (~100 نوع)</h2>
+    <p>من <code>Tobuli/Reports/Reports</code> — مجمّعة حسب الفئة:</p>
+    <div class="table-wrap"><table>
+        <thead><tr><th>الفئة</th><th>أمثلة</th></tr></thead>
+        <tbody>
+            <tr><td>الوقود</td><td>FuelFillings, FuelThefts, FuelLevel, FuelFlowRate, FuelTankUsage(+Driver/Split)</td></tr>
+            <tr><td>الرحلات/التوقفات</td><td>DrivesStops(+Drivers/Geofences/Merge/Simplified), Stops, StopsFilter</td></tr>
+            <tr><td>المناطق</td><td>GeofencesInOut(+Drivers/Engine/Shift/24Mode), GeofencesStop, DevicesInGeofences</td></tr>
+            <tr><td>السرعة</td><td>Overspeeds(+Roads/Custom/InGeofence/ECM), Speed, Underspeeds, SpeedCompareGpsEcm</td></tr>
+            <tr><td>المحرك/المسافة</td><td>EngineHours(Current/Daily/Graph), Odometer(+Daily), DriveTime, WorkHoursDaily</td></tr>
+            <tr><td>سلوك السائق</td><td>RAG(+Driver/Geofences/Seatbelt/WithTurn), IvmsDrivers, DriverMaxRpm</td></tr>
+            <tr><td>عام/أسطول</td><td>GeneralInformation(+Merged/Shift), ObjectHistory, LastLocation, TravelSheet, Temperature</td></tr>
+            <tr><td>تشغيل</td><td>OfflineDevice, InstallationDevice, SentCommands, UsersDevices, DeviceExpenses, Checklist</td></tr>
+        </tbody>
+    </table></div>
+    <div class="note tip"><strong>نصيحة:</strong> لا تعِد بناء ١٠٠ تقرير. أعِد بناء <strong>محرّك تقارير</strong> واحدًا (Polars) + ١٠–١٥ تقريرًا أساسيًا، والباقي يولّده الـ AI agent (Report Analyst) عند الطلب. قائمة GPSWOX = مرجع «ما يطلبه العملاء فعلًا».</div>
+
+    <!-- 7. ALERTS -->
+    <h2 id="alerts">⑦ التنبيهات والأحداث</h2>
+    <div class="table-wrap"><table>
+        <thead><tr><th>الكيان</th><th>الدور</th></tr></thead>
+        <tbody>
+            <tr><td>Alert</td><td>قاعدة تنبيه (نوع + شروط + أجهزة + جدول زمني)</td></tr>
+            <tr><td>AlertDevice / AlertGeofence / AlertFuelConsumption</td><td>ربط القاعدة بالأجهزة/المناطق/شروط الوقود</td></tr>
+            <tr><td>Event / EventCustom / EventLog</td><td>الحدث المتولّد عند تحقّق القاعدة + سجلّه</td></tr>
+            <tr><td>أنواع التنبيهات</td><td>geofence in/out, overspeed, fuel drain/fill, ignition, offline, harsh driving, sensor, SOS, low battery…</td></tr>
+        </tbody>
+    </table></div>
+    <div class="note">في Python: <code>AlertRule</code> entity + rule engine يستهلك <code>PositionReceived</code> event → يولّد <code>Event</code> → <code>NotificationService</code>. هذا يغذّي مباشرة الحلقة الـ agentic (alert → investigate → act).</div>
+
+    <!-- 8. COMMANDS -->
+    <h2 id="commands">⑧ الأوامر (GPRS / SMS)</h2>
+    <div class="table-wrap"><table>
+        <thead><tr><th>المكوّن</th><th>الدور</th></tr></thead>
+        <tbody>
+            <tr><td>CommandTemplate / UserGprsTemplate</td><td>قوالب أوامر جاهزة لكل بروتوكول</td></tr>
+            <tr><td>SentCommand</td><td>سجلّ الأوامر المُرسلة وحالتها</td></tr>
+            <tr><td>CommandSchedule</td><td>أوامر مجدولة</td></tr>
+            <tr><td>قنوات الإرسال</td><td>GPRS (عبر Traccar/TCP), SMS (gateway), Protocol-specific</td></tr>
+        </tbody>
+    </table></div>
+    <div class="note warn"><strong>أمان:</strong> الأوامر (إيقاف محرّك، فتح، تهيئة) = أفعال عالية الخطورة. في PutPath تمرّ عبر <strong>ClawPatrol + موافقة بشرية</strong> قبل التنفيذ. الإرسال الفعلي عبر <code>TraccarPort.sendCommand()</code>.</div>
+
+    <!-- 9. SCHEMA -->
+    <h2 id="schema">⑨ نموذج البيانات / Schema (338 migration)</h2>
+    <h3>جدول الأجهزة (مثال غنيّ — احتفظ بأغلبه)</h3>
+    <pre><code>devices: id, user_id(FK), traccar_device_id, imei(unique), name, active, deleted,
+  plate_number, vin, registration_number, object_owner, device_model, sim_number,
+  fuel_quantity, fuel_price, fuel_per_km, fuel_measurement_id,
+  engine_hours('gps'|'acc'|...), detect_engine, min_moving_speed,
+  min_fuel_fillings, min_fuel_thefts, snap_to_road, gprs_templates_only,
+  icon_id, icon_colors{moving,stopped,offline,engine}, tail_color, tail_length,
+  expiration_date, parameters(JSON), timestamps</code></pre>
+    <div class="table-wrap"><table>
+        <thead><tr><th>الجدول</th><th>المفتاح</th><th>القرار</th></tr></thead>
+        <tbody>
+            <tr><td>users</td><td>manager_id(tree), billing_plan_id, devices_limit, subscription_expiration, active</td><td><span class="tag rebuild">أعِد</span> كـ Account (نموذج العملاء)</td></tr>
+            <tr><td>devices</td><td>imei, traccar_device_id, user_id</td><td><span class="tag keep">أبقِ</span> الحقول الغنية</td></tr>
+            <tr><td>user_device_pivot</td><td>user_id, device_id, group_id</td><td><span class="tag rebuild">أعِد</span> = العزل بالملكية</td></tr>
+            <tr><td>traccar_devices / _positions</td><td>uniqueId, lat/lng/speed…</td><td><span class="tag modern">حدّث</span> → TimescaleDB</td></tr>
+            <tr><td>device_sensors</td><td>type, parameters, calibration</td><td><span class="tag keep">أبقِ</span> منطق المعايرة</td></tr>
+            <tr><td>geofences / poi / routes</td><td>polygon/circle, group</td><td><span class="tag keep">أبقِ</span> (PostGIS)</td></tr>
+            <tr><td>alerts / events</td><td>type, conditions</td><td><span class="tag rebuild">أعِد</span> كـ rule engine</td></tr>
+            <tr><td>billing_plans / subscriptions</td><td>limits, expiration</td><td><span class="tag rebuild">أعِد</span> = خطط SaaS</td></tr>
+            <tr><td>oauth_* (5 جداول)</td><td>Passport</td><td><span class="tag modern">حدّث</span> → JWT/OAuth بايثون</td></tr>
+        </tbody>
+    </table></div>
+    <div class="note tip"><strong>نصيحة:</strong> ٣٣٨ migration تراكمت عبر سنوات (وفيها ترقيعات). لا تنسخها. استخرج <strong>النموذج النهائي</strong> للجداول الأساسية فقط (~٤٠ جدولًا) وأعد تصميمه نظيفًا في Django مع PostGIS للجغرافيا.</div>
+
+    <!-- 10. AUTH -->
+    <h2 id="auth">⑩ الأمان والمصادقة</h2>
+    <div class="table-wrap"><table>
+        <thead><tr><th>الطبقة (من الكود)</th><th>GPSWOX</th><th>مكافئ Python/Django</th></tr></thead>
+        <tbody>
+            <tr><td>المصادقة</td><td>3 guards: web(session), api(Passport/OAuth), device(Passport)</td><td>session + JWT/OAuth2 (djangorestframework-simplejwt / authlib)</td></tr>
+            <tr><td>مزوّدو الهوية</td><td>users (eloquent / multi_credentials), devices</td><td>Custom User model + device auth backend</td></tr>
+            <tr><td>2FA</td><td>google2fa</td><td>django-otp / pyotp</td></tr>
+            <tr><td>الصلاحيات</td><td>config/permissions.php: module → {view,edit,remove} + UserPermission + perm()</td><td>RBAC: Role/Permission models + DRF permissions + policy layer</td></tr>
+            <tr><td>حدود الخطة</td><td>billing-plan permissions, devices_limit</td><td>Plan gating في الـ service layer</td></tr>
+            <tr><td>Middleware</td><td>ActiveSubscription, AdminAuth, ManagerAuth, Check2fa, OneSessionPerUser, PermissionsHash, ConfirmedAction, Captcha, EnsureEmail/PhoneVerified, TokenAuth, TrackerAuth</td><td>Django middleware + DRF permission classes مكافئة</td></tr>
+        </tbody>
+    </table></div>
+    <div class="note tip"><strong>نصائح أمان:</strong> (1) <code>ConfirmedAction</code> (تأكيد الأفعال الحساسة) → نفّذها كـ ClawPatrol في PutPath. (2) <code>OneSessionPerUser</code> و<code>PermissionsHash</code> (إبطال الصلاحيات عند تغييرها) ممارسات ممتازة — انقلها. (3) فرض <code>owner_id</code> في طبقة الـ service لا في الـ controller (الـ controller يُنسى). (4) ManagerAuth = منطق الموزّع — احتفظ به.</div>
+
+    <!-- 11. ENV -->
+    <h2 id="env">⑪ الـ ENV والإعدادات (~35 ملف config)</h2>
+    <p>إعدادات GPSWOX: app, database, tracker, auth, permissions, limits, payments, sms, maps, fcm, broadcasting, queue, cache, session, google2fa, captcha, cors, webhook. خطّط الـ <code>.env</code> لنسختك Python هكذا:</p>
+    <pre><code><span class="comment"># === App ===</span>
+APP_ENV=prod  APP_URL=...  SECRET_KEY=...
+<span class="comment"># === Databases ===</span>
+POSTGRES_URL=postgres://...           <span class="comment"># أعمال</span>
+TIMESCALE_URL=postgres://...          <span class="comment"># مواقع/تيليمتري</span>
+VECTOR_DB_URL=...                     <span class="comment"># RAG (pgvector/Qdrant)</span>
+REDIS_URL=redis://...                 <span class="comment"># cache + streams</span>
+<span class="comment"># === Traccar ===</span>
+TRACCAR_API_URL=http://traccar:8082   TRACCAR_WS_URL=ws://traccar:8082/api/socket
+TRACCAR_USER=...  TRACCAR_PASS=...     TRACCAR_FORWARD_SECRET=...
+<span class="comment"># === Auth ===</span>
+JWT_SECRET=...  OAUTH_...  OTP_ISSUER=PutPath
+<span class="comment"># === AI Layer ===</span>
+FLUE_SERVICE_URL=http://ai-layer:...  LITELLM_URL=http://litellm:4000  LITELLM_MASTER_KEY=...
+<span class="comment"># === Knowledge / Forecast ===</span>
+SURYA_...  OKF_KNOWLEDGE_PATH=/knowledge  TIMESFM_MODEL=google/timesfm-...
+<span class="comment"># === Channels / Maps ===</span>
+SMS_PROVIDER=...  FCM_KEY=...  WHATSAPP_...  MAPS_KEY=...
+<span class="comment"># === Platform ===</span>
+GROWTHBOOK_KEY=...  SENTRY_DSN=...  STORAGE_...(S3)</code></pre>
+    <div class="note"><strong>تخطيط:</strong> جمّع الـ env في مجموعات (App / DBs / Traccar / Auth / AI / Channels / Platform). استخدم <code>pydantic-settings</code> (بايثون) للتحقق من النوع وقت الإقلاع — أنظف من قراءة <code>env()</code> المبعثرة في GPSWOX.</div>
+
+    <!-- 12. TIPS -->
+    <h2 id="tips">⑫ نصائح الترحيل PHP → Python</h2>
+    <div class="table-wrap"><table>
+        <thead><tr><th>المجال</th><th>النصيحة</th></tr></thead>
+        <tbody>
+            <tr><td>الاستراتيجية</td><td>عدّن المعرفة لا الكود. opensrc لقراءة منطق GPSWOX، ثم أعد بناءه نظيفًا — لا تترجم PHP سطرًا بسطر.</td></tr>
+            <tr><td>الأولوية</td><td>Phase 1: Accounts + Tracking(عبر Traccar) + Geo + Alerting. كل الباقي لاحقًا.</td></tr>
+            <tr><td>Traccar</td><td>لا تلمس محرّك البروتوكولات. استهلكه عبر API/WS/Forwarding فقط. هذا يوفّر سنوات عمل.</td></tr>
+            <tr><td>المواقع</td><td>TimescaleDB بدل تقسيم MySQL اليدوي. owner_id للعزل.</td></tr>
+            <tr><td>المستشعرات</td><td>أعِد بناء منطق الاستخلاص/المعايرة كـ strategies مختبَرة (هنا أثمن معرفة).</td></tr>
+            <tr><td>التقارير</td><td>محرّك Polars واحد + AI agent، لا ١٠٠ تقرير مكتوب يدويًا.</td></tr>
+            <tr><td>الـ ORM</td><td>تجنّب «fat models» الضخمة (User.php عملاق). domain نظيف + repositories.</td></tr>
+            <tr><td>الأمان</td><td>انقل ConfirmedAction/OneSession/PermissionsHash؛ افرض owner_id في الـ service layer.</td></tr>
+            <tr><td>الأفعال الخطرة</td><td>أوامر الأجهزة خلف ClawPatrol + موافقة + audit.</td></tr>
+            <tr><td>الديون</td><td>تجاهل ٣٣٨ migration المتراكمة، الملفات <code>.bak</code>، والتقارير المخصّصة لعميل واحد (Birla/Automon…).</td></tr>
+        </tbody>
+    </table></div>
+
+    <div class="note tip"><strong>الخطوة العملية:</strong> أبدأ بـ <code>opensrc path github:djmomen/legacy-code-gpswox</code> ثم أعدّن سياقًا واحدًا (مثلًا المستشعرات + الوقود) وأحوّله إلى spec في Spec Kitty + ملفات OKF/MD معرفة. تريدني أبدأ بذلك؟</div>
+
+</div>
+</body>
+</html>
